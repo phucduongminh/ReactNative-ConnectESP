@@ -3,6 +3,7 @@ import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import { ThemeProvider } from 'styled-components'
 
 import MainDrawer from './src/stacks/MainDrawer';
 import Preload from './src/screens/Preload';
@@ -13,6 +14,10 @@ import Historic from './src/screens/Historic';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
 import NewDevice from './src/screens/NewDevice';
+import Brands from './src/screens/Brands'
+import Devices from './src/screens/Devices'
+import Control from './src/screens/Control'
+import theme from './theme'
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -34,6 +39,9 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="NewDevice" component={NewDevice} />
+      <Drawer.Screen name="Brands" component={Brands} />
+      <Drawer.Screen name="Devices" component={Devices} />
+      <Drawer.Screen name="Control" component={Control} />
     </Drawer.Navigator>
   );
 }
@@ -53,8 +61,10 @@ function StackNavigator({navigation}) {
 
 export default function App() {
   return (
+    <ThemeProvider theme={theme.dark}>
     <NavigationContainer>
       <StackNavigator />
     </NavigationContainer>
+    </ThemeProvider>
   );
 }

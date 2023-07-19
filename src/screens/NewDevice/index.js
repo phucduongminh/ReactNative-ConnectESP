@@ -25,7 +25,7 @@ import dgram from 'react-native-udp'
 export default () => {
   const navigation = useNavigation();
   const port = 12345;
-  const notFoundText = 'Aqui vai o resultado';
+  const notFoundText = 'Search result';
 
   const [loading, setLoading] = useState(false);
   const [foundEspList, setFoundEspList] = useState([{key:notFoundText}]);
@@ -57,7 +57,7 @@ export default () => {
 
   useEffect(() => {
     if (foundEspList.length > 1) {
-      console.log('achei um esp8266 na rede!', foundEspList[-1]?.host);
+      console.log('I found an esp8266 on the network!', foundEspList[-1]?.host);
     }
   }, [foundEspList]);
 
@@ -101,16 +101,17 @@ export default () => {
         <View
           style={styleGlobal.scrollViewSignIn}
           keyboardShouldPersistTaps={'handled'}>
-          <PrimaryText>Encontre seu ESP8266!</PrimaryText>
+          <PrimaryText>Find your ESP8266!</PrimaryText>
           <SecondaryText>
-            Clique no botão abaixo para pesquisar os ESP8266 pela rede!
+            
+Click the button below to search the ESP8266 over the network!
           </SecondaryText>
           <ButtonView>
             {!loading && (
               <TouchableOpacity
                 onPress={() => beginSearch()}
                 style={[styleGlobal.signIn, styleGlobal.signInColor]}>
-                <Text style={styleGlobal.textBtnSignUp}>Pesquisar</Text>
+                <Text style={styleGlobal.textBtnSignUp}>Search</Text>
               </TouchableOpacity>
             )}
             {loading && (

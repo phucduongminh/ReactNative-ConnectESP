@@ -22,10 +22,18 @@ const MainDrawer = props => {
         </StyledTouchableOpacity>
 
         <StyledTouchableOpacity
+          onPress={() => props.navigation.navigate('Devices')}>
+          <Opcoes>
+            <MaterialIcons name="devices" size={28} style={{color: 'white'}} />
+            <TextItem>Devices</TextItem>
+          </Opcoes>
+        </StyledTouchableOpacity>
+
+        <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('NewDevice')}>
           <Opcoes>
-            <MaterialIcons name="add" size={28} style={{color: 'white'}} />
-            <TextItem>New Device</TextItem>
+            <MaterialIcons name="settings-remote" size={28} style={{color: 'white'}} />
+            <TextItem>New Controller</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
 
