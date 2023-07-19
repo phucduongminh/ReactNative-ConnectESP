@@ -126,9 +126,10 @@ Click the button below to search the ESP8266 over the network!
             )}
           </ButtonView>
           <View>
+            
           <FlatList
         data={foundEspList}
-        renderItem={({item}) => <Text style={{color: 'black', marginTop: 20}}>{item.key}</Text>}
+        renderItem={({item}) => <ScrollView><Text style={{color: 'black', marginTop: 20}}>{item.key}</Text></ScrollView>}
       />
           </View>
         </View>

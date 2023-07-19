@@ -15,8 +15,10 @@ import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
 import NewDevice from './src/screens/NewDevice';
 import Brands from './src/screens/Brands'
+import ACBrands from './src/screens/ACBrands'
 import Devices from './src/screens/Devices'
 import Control from './src/screens/Control'
+import ACControl from './src/screens/ACControl'
 import theme from './theme'
 
 const navOptionHandler = () => ({
@@ -40,8 +42,10 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="NewDevice" component={NewDevice} />
       <Drawer.Screen name="Brands" component={Brands} />
+      <Drawer.Screen name="ACBrands" component={ACBrands} />
       <Drawer.Screen name="Devices" component={Devices} />
       <Drawer.Screen name="Control" component={Control} />
+      <Drawer.Screen name="ACControl" component={ACControl} />
     </Drawer.Navigator>
   );
 }

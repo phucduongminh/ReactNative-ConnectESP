@@ -1,9 +1,10 @@
-import React from 'react'
-import t from 'prop-types'
+import React from 'react';
+import t from 'prop-types';
+import { TouchableOpacity } from 'react-native'; // Use TouchableOpacity for the ripple effect
 
-import { Container, Button } from './styled'
+import { Container, Button } from './styled';
 
-export default function Ripple ({
+export default function Ripple({
   onPress,
   full,
   width,
@@ -13,7 +14,7 @@ export default function Ripple ({
   marginRight,
   marginBottom,
   marginLeft,
-  children
+  children,
 }) {
   return (
     <Container
@@ -26,12 +27,12 @@ export default function Ripple ({
       marginBottom={marginBottom}
       marginLeft={marginLeft}
     >
-      <Button onPress={onPress}>
-        {children}
-      </Button>
+        <Button onPress={onPress}>{children}</Button>
     </Container>
-  )
+  );
 }
+
+// Rest of the code remains the same
 
 Ripple.defaultProps = {
   full: false,

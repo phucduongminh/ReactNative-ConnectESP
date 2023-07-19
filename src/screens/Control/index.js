@@ -10,7 +10,7 @@ const data = [
   {
     id: v4(),
     buttons: [
-      { id: v4(), type: 'button', icon: 'power', action: () => {} },
+      { id: v4(), type: 'button', icon: 'power', action: () => {console.log('Power button clicked!');}},
       { id: v4(), type: 'button', icon: 'tv', action: () => {} },
       { id: v4(), type: 'button', icon: 'menu', action: () => {} }
     ]

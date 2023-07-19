@@ -27,27 +27,22 @@ const data = [
     name: 'Smart Box',
     gradient: ['#29323c', '#485563']
   },
-  {
-    id: 5,
-    name: 'Receptor A/V',
-    gradient: ['#ff758c', '#ff7eb3']
-  }
 ]
 
 const offset = 30
 const width = (Dimensions.get('window').width / 2) - offset
 
-export default function List ({ handleNavigate }) {
+export default function List({ handleNavigate }) {
   return (
     <Container
       data={data}
       keyExtractor={item => String(item.id)}
       renderItem={({ item }) => {
-        const { gradient, name } = item
+        const { gradient, name } = item;
 
         return (
           <Ripple
-            onPress={handleNavigate}
+            onPress={() => handleNavigate(name)} // Pass the name as a parameter
             width={width}
             height={200}
             radius={16}
@@ -57,10 +52,10 @@ export default function List ({ handleNavigate }) {
               <Name>{name}</Name>
             </Gradient>
           </Ripple>
-        )
+        );
       }}
     />
-  )
+  );
 }
 
 List.propTypes = {

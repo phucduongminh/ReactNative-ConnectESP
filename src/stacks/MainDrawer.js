@@ -37,13 +37,13 @@ const MainDrawer = props => {
           </Opcoes>
         </StyledTouchableOpacity>
 
-        <StyledTouchableOpacity
+        {/*<StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Profile')}>
           <Opcoes>
             <MaterialIcons name="person" size={28} style={{color: 'white'}} />
             <TextItem>Profile</TextItem>
           </Opcoes>
-        </StyledTouchableOpacity>
+        </StyledTouchableOpacity>*/}
 
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('SignIn')}>
@@ -53,7 +53,7 @@ const MainDrawer = props => {
           </Opcoes>
         </StyledTouchableOpacity>
 
-        <StyledTouchableOpacity
+        {/*<StyledTouchableOpacity
           onPress={() => props.navigation.navigate('SignUp')}>
           <Opcoes>
             <MaterialIcons
@@ -63,21 +63,21 @@ const MainDrawer = props => {
             />
             <TextItem>SignUp</TextItem>
           </Opcoes>
-        </StyledTouchableOpacity>
+        </StyledTouchableOpacity>*/}
 
-        <StyledTouchableOpacity
+        {/*<StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Historic')}>
           <Opcoes>
             <MaterialIcons name="favorite" size={28} style={{color: 'white'}} />
             <TextItem>Historic</TextItem>
           </Opcoes>
-        </StyledTouchableOpacity>
+  </StyledTouchableOpacity>*/}
 
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Preload')}>
           <Opcoes>
             <MaterialIcons name="refresh" size={28} style={{color: 'white'}} />
-            <TextItem>Preload</TextItem>
+            <TextItem>Reload</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
       </ViewItem>
