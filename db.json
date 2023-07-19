@@ -7,7 +7,8 @@
         "contrastText": "#FFFFFF",
         "wrong": "#FF5722",
         "success": "#4CAF50",
-        "statuBar": "#24C28B"
+        "statuBar": "#24C28B",
+        "text": "#888888"
       },
       "borderRadius": "4px"
     }
