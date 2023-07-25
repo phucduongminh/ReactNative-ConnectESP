@@ -19,6 +19,7 @@ import ACBrands from './src/screens/ACBrands'
 import Devices from './src/screens/Devices'
 import Control from './src/screens/Control'
 import ACControl from './src/screens/ACControl'
+import { SocketProvider } from './SocketContext';
 import theme from './theme'
 
 const navOptionHandler = () => ({
@@ -65,10 +66,12 @@ function StackNavigator({navigation}) {
 
 export default function App() {
   return (
+    <SocketProvider>
     <ThemeProvider theme={theme.dark}>
     <NavigationContainer>
       <StackNavigator />
     </NavigationContainer>
     </ThemeProvider>
+    </SocketProvider>
   );
 }

@@ -18,7 +18,6 @@ import {
 import db from '../../../db.json';
 import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
-import { useSocketContext } from '../../../SocketContext';
 import dgram from 'react-native-udp'
 
 export default () => {
@@ -27,11 +26,27 @@ export default () => {
 
   const [loading, setLoading] = useState(false);
   const [foundEspList, setFoundEspList] = useState([{key:notFoundText}]);
-  //const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const { isSocketConnected, setIsSocketConnected,hostIP,setHostIP } = useSocketContext();
-  //const [hostIP, setHostIP] = useState('');
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const [hostIP, setHostIP] = useState('');
 
   const socket = dgram.createSocket('udp4');
+  socket.on('message', function (msg, rinfo) {
+    var buffer = {
+      data: msg.toString(),
+    };
+    if (buffer.data !== 'ESP-ACKER'&&buffer.data !== 'CANCEl') {
+      console.log('data.data', buffer.data);
+      setHostIP(buffer.data);
+      // Check if the list already contains an item with the new value
+      if (!foundEspList.some((item) => item.key === buffer.data)) {
+        setFoundEspList((prevList) => [
+          ...prevList,
+          { key: "ESP # IP:: " + buffer.data },
+        ]);
+      }
+    }
+    console.log('Message received', msg);
+  });
 
   /*useEffect(() => {
     if (foundEspList.length > 1) {
@@ -43,28 +58,11 @@ export default () => {
     socket.bind(options.port)
     socket.once('listening', function() {
       setIsSocketConnected(true);
-      socket.send('ESP-ACK', undefined, undefined, options.port, options.host, function(err) {
+      socket.send('ESP-ACKER', undefined, undefined, options.port, options.host, function(err) {
         if (err) throw err
         console.log('Message sent!')
       })
     })
-    socket.on('message', function (msg, rinfo) {
-      var buffer = {
-        data: msg.toString(),
-      };
-      if (buffer.data !== 'ESP-ACK'&&buffer.data !== 'CANCEl') {
-        console.log('data.data', buffer.data);
-        setHostIP(buffer.data);
-        // Check if the list already contains an item with the new value
-        if (!foundEspList.some((item) => item.key === buffer.data)) {
-          setFoundEspList((prevList) => [
-            ...prevList,
-            { key: "ESP # IP:: " + buffer.data },
-          ]);
-        }
-      }
-      console.log('Message received', msg);
-    });
   }
 
   function beginSearch() {
@@ -99,7 +97,6 @@ export default () => {
       socket.send('CANCEL', undefined, undefined, port, hostIP, function(err) {
         if (err) throw err   
       })
-      socket.on('message', function (msg, rinfo) {})
     socket.removeAllListeners(); 
     setIsSocketConnected(false);
     setLoading(false);
