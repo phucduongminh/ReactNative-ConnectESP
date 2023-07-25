@@ -97,7 +97,7 @@ const data = [
 ];
 
 export default () => {
-  const [currentDegree, setCurrentDegree] = useState(22); // Step 1
+  const [currentDegree, setCurrentDegree] = useState(30); // Step 1
 
   const handleTemperatureUp = () => {
     setCurrentDegree(prevDegree => prevDegree + 1); // Step 3

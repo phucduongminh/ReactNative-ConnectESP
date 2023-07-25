@@ -52,17 +52,20 @@ export default () => {
       var buffer = {
         data: msg.toString(),
       };
-      if (buffer.data !== 'ESP-ACK'&&buffer.data !== 'CANCEl') {
-        console.log('data.data', buffer.data);
-        setHostIP(buffer.data);
-        // Check if the list already contains an item with the new value
-        if (!foundEspList.some((item) => item.key === buffer.data)) {
-          setFoundEspList((prevList) => [
-            ...prevList,
-            { key: "ESP # IP:: " + buffer.data },
-          ]);
+      if (buffer.data.includes("192.168")) {
+        if (buffer.data !== 'ESP-ACK' && buffer.data !== 'CANCEL' && buffer.data !== 'WAIT') {
+          console.log('data.data', buffer.data);
+          setHostIP(buffer.data);
+          // Check if the list already contains an item with the new value
+          if (!foundEspList.some((item) => item.key === buffer.data)) {
+            setFoundEspList((prevList) => [
+              ...prevList,
+              { key: "ESP # IP:: " + buffer.data },
+            ]);
+          }
         }
-      }
+        socket.close();
+      }      
       console.log('Message received', msg);
     });
   }
