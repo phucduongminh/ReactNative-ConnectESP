@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { v4 } from 'uuid';
 
 import { Button, Grouped, Rounded } from './Buttons';
+
 import { Container, Row, Column } from './styled';
 
 import { useSocketContext } from '../../../SocketContext'; // Assuming you have this context
@@ -12,7 +13,6 @@ import dgram from 'react-native-udp'; // Assuming you are using this library for
 export default () => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
-  const { isSocketConnected, hostIP } = useSocketContext(); // Use the socket context here
 
   const handleTemperatureUp = () => {
     setCurrentDegree(prevDegree => prevDegree + 1);
@@ -22,7 +22,13 @@ export default () => {
     setCurrentDegree(prevDegree => prevDegree - 1);
   };
 
+  const toggleMessageStage = () => {
+    setMessageStageOn(prevStatus => !prevStatus);
+  };
+
   const sendPowerSignal = () => {
+    toggleMessageStage();
+    const { isSocketConnected, hostIP } = useSocketContext();
     const socket = dgram.createSocket('udp4');
     const port = 12345;
 
@@ -31,7 +37,7 @@ export default () => {
       return;
     }
 
-    const signalToSend = messageStageOn ? 'OFFAC' : 'ONAC';
+    const signalToSend = messageStageOn ? 'OFF' : 'ON';
 
     socket.bind(port);
     socket.once('listening', function () {
@@ -39,10 +45,11 @@ export default () => {
         if (err) throw err;
         console.log(`Sent ${signalToSend} signal to server:`, hostIP);
         socket.close();
-        // Toggle the message stage after sending the signal
-        setMessageStageOn(prevStatus => !prevStatus);
       });
     });
+
+    // Toggle the message stage after sending the signal
+    toggleMessageStage();
   };
 
   const data = [
@@ -79,7 +86,7 @@ export default () => {
               type: 'rounded',
               buttons: {
                 center: {
-                  action: sendPowerSignal,
+                  action: {sendPowerSignal},
                   icon: 'power'
                 }
               }

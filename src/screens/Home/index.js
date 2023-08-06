@@ -35,9 +35,17 @@ export default ({navigation}) => {
         };
         console.log('data.data', buffer.data);
         if(buffer.data!=="UNKNOWN"&&buffer.data!=="WAIT"){
-          alert('Remote Identified!');
+          alert('Remote Identified! Device: '+buffer.data);
           navigation.navigate('ACControl')
+          /*socket.send('SEND', undefined, undefined, port, hostIP, function(err) {
+            if (err) throw err  
+            console.log(hostIP) 
+            //socket.close();
+          })*/
           socket.close();
+        }
+        if(buffer.data=="UNKNOWN"){
+          alert('UNKNOWN device!');
         }
       })
     })
@@ -50,17 +58,25 @@ export default ({navigation}) => {
         barStyle="light-content"
       />
       <Header>
-        <H1>HOME</H1>
+        <H1>Welcome!</H1>
       </Header>
       <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
       <ScrollView
         style={styleGlobal.scrollViewSignIn}
         keyboardShouldPersistTaps={'handled'}>
-        <PrimaryText>Home</PrimaryText>
+        <PrimaryText>Good to see you!</PrimaryText>
         <TouchableOpacity
           onPress={() => sendHomeSignal()}
           style={[styleGlobal.signIn, styleGlobal.signInColor]}>
           <Text style={styleGlobal.textBtnSignUp}>Add New Remote</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styleGlobal.signIn, styleGlobal.signInColor]}>
+          <Text style={styleGlobal.textBtnSignUp}>Choose Device</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styleGlobal.signIn, styleGlobal.signInColor]}>
+          <Text style={styleGlobal.textBtnSignUp}>Learn Signal</Text>
         </TouchableOpacity>
       </ScrollView>
     </Animatable.View>
