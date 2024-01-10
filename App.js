@@ -18,6 +18,7 @@ import ACBrands from './src/screens/ACBrands'
 import Devices from './src/screens/Devices'
 import Control from './src/screens/Control'
 import ACControl from './src/screens/ACControl'
+import ConnectBluetooth from './src/screens/ConnectBluetooth';
 import { SocketProvider } from './SocketContext';
 import theme from './theme'
 
@@ -45,6 +46,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="Devices" component={Devices} />
       <Drawer.Screen name="Control" component={Control} />
       <Drawer.Screen name="ACControl" component={ACControl} />
+      <Drawer.Screen name="ConnectBluetooth" component={ConnectBluetooth} />
     </Drawer.Navigator>
   );
 }
