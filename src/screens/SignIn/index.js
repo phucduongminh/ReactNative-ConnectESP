@@ -125,7 +125,7 @@ export default () => {
           </Action>
           {data.isValidEmail ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styleGlobal.errorMsg}>Campo Obrigátorio</Text>
+              <Text style={styleGlobal.errorMsg}>Required field!</Text>
             </Animatable.View>
           )}
 
@@ -166,7 +166,7 @@ export default () => {
                 colors={
                   !data.isValidEmail || !data.isValidPassword
                     ? ['#8a92a8', '#8a92a8']
-                    : [db.theme.colors.statuBar, db.theme.colors.statuBar]
+                    : [db.theme.colors.primary, db.theme.colors.primary]
                 }
                 style={styleGlobal.signIn}>
                 <Text style={styleGlobal.textBtnSignIn}>Sign In</Text>

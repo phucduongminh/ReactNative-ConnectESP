@@ -36,7 +36,7 @@ export default () => {
 
   const handleSignClick = async () => {
     navigation.reset({
-      routes: [{name: 'MainTab'}],
+      routes: [{name: 'Home'}],
     });
   };
 
@@ -226,7 +226,7 @@ export default () => {
                 handleSignClick();
               }}>
               <LinearGradient
-                colors={[db.theme.colors.statuBar, db.theme.colors.statuBar]}
+                colors={[db.theme.colors.primary, db.theme.colors.primary]}
                 style={styleGlobal.signIn}>
                 <Text style={styleGlobal.textBtnSignIn}>Sign Up</Text>
               </LinearGradient>

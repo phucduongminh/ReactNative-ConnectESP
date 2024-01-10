@@ -4,7 +4,6 @@ import db from '../../db.json';
 const DIMENSION_HEIGHT = Dimensions.get('window').height;
 
 export default StyleSheet.create({
-  // ==== TELAS EM GERAL ==== //
 
   colorWhite: {
     color: '#ffff',

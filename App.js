@@ -9,7 +9,6 @@ import MainDrawer from './src/stacks/MainDrawer';
 import Preload from './src/screens/Preload';
 import SignIn from './src/screens/SignIn';
 import SignUp from './src/screens/SignUp';
-import MainTab from './src/stacks/MainTab';
 import Historic from './src/screens/Historic';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
@@ -37,7 +36,6 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="Preload" component={Preload} />
       <Drawer.Screen name="SignIn" component={SignIn} />
       <Drawer.Screen name="SignUp" component={SignUp} />
-      <Drawer.Screen name="MainTab" component={MainTab} />
       <Drawer.Screen name="Historic" component={Historic} />
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
