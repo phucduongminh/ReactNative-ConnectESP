@@ -84,8 +84,8 @@ const MainDrawer = props => {
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('ConnectBluetooth')}>
           <Opcoes>
-            <MaterialIcons name="favorite" size={28} style={{color: 'white'}} />
-            <TextItem>Historic</TextItem>
+            <MaterialIcons name="bluetooth" size={28} style={{color: 'white'}} />
+            <TextItem>ConnectBluetooth</TextItem>
           </Opcoes>
   </StyledTouchableOpacity>
 
