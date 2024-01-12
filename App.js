@@ -9,7 +9,6 @@ import MainDrawer from './src/stacks/MainDrawer';
 import Preload from './src/screens/Preload';
 import SignIn from './src/screens/SignIn';
 import SignUp from './src/screens/SignUp';
-import MainTab from './src/stacks/MainTab';
 import Historic from './src/screens/Historic';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
@@ -19,6 +18,7 @@ import ACBrands from './src/screens/ACBrands'
 import Devices from './src/screens/Devices'
 import Control from './src/screens/Control'
 import ACControl from './src/screens/ACControl'
+import ConnectBluetooth from './src/screens/ConnectBluetooth';
 import { SocketProvider } from './SocketContext';
 import theme from './theme'
 
@@ -37,7 +37,6 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="Preload" component={Preload} />
       <Drawer.Screen name="SignIn" component={SignIn} />
       <Drawer.Screen name="SignUp" component={SignUp} />
-      <Drawer.Screen name="MainTab" component={MainTab} />
       <Drawer.Screen name="Historic" component={Historic} />
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
@@ -47,6 +46,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="Devices" component={Devices} />
       <Drawer.Screen name="Control" component={Control} />
       <Drawer.Screen name="ACControl" component={ACControl} />
+      <Drawer.Screen name="ConnectBluetooth" component={ConnectBluetooth} />
     </Drawer.Navigator>
   );
 }

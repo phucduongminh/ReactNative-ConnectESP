@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ButtonView,
   SecondaryText,
@@ -26,9 +26,9 @@ export default () => {
   const notFoundText = 'Search result';
 
   const [loading, setLoading] = useState(false);
-  const [foundEspList, setFoundEspList] = useState([{key:notFoundText}]);
+  const [foundEspList, setFoundEspList] = useState([{ key: notFoundText }]);
   //const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const { isSocketConnected, setIsSocketConnected,hostIP,setHostIP } = useSocketContext();
+  const { isSocketConnected, setIsSocketConnected, hostIP, setHostIP } = useSocketContext();
   //const [hostIP, setHostIP] = useState('');
 
   const socket = dgram.createSocket('udp4');
@@ -41,9 +41,9 @@ export default () => {
 
   function tryToConnect(options) {
     socket.bind(options.port)
-    socket.once('listening', function() {
+    socket.once('listening', function () {
       setIsSocketConnected(true);
-      socket.send('ESP-ACK', undefined, undefined, options.port, options.host, function(err) {
+      socket.send('ESP-ACK', undefined, undefined, options.port, options.host, function (err) {
         if (err) throw err
         console.log('Message sent!')
       })
@@ -65,7 +65,7 @@ export default () => {
           }
         }
         socket.close();
-      }      
+      }
       console.log('Message received', msg);
     });
   }
@@ -82,31 +82,31 @@ export default () => {
     tryToConnect(options);
 
     // Set a timeout to stop loading after 2 minutes (120,000 milliseconds)
-    if(isSocketConnected){
-    setTimeout(() => {
-      setLoading(false);
-      socket.removeAllListeners();
-      socket.close();
-      setIsSocketConnected(false);
-      if (foundEspList.length === 1 && foundEspList[0].key === notFoundText) {
-        // No devices found within 2 minutes
-        setFoundEspList([{ key: 'No devices found!' }]);
-      }
-    }, 120000); // 2 minutes in milliseconds
-  }
+    if (isSocketConnected) {
+      setTimeout(() => {
+        setLoading(false);
+        socket.removeAllListeners();
+        socket.close();
+        setIsSocketConnected(false);
+        if (foundEspList.length === 1 && foundEspList[0].key === notFoundText) {
+          // No devices found within 2 minutes
+          setFoundEspList([{ key: 'No devices found!' }]);
+        }
+      }, 120000); // 2 minutes in milliseconds
+    }
   }
 
   function cancelSearch() {
     socket.bind(port)
-    socket.once('listening', function() {
-      socket.send('CANCEL', undefined, undefined, port, hostIP, function(err) {
-        if (err) throw err   
+    socket.once('listening', function () {
+      socket.send('CANCEL', undefined, undefined, port, hostIP, function (err) {
+        if (err) throw err
       })
-      socket.on('message', function (msg, rinfo) {})
-    socket.removeAllListeners(); 
-    setIsSocketConnected(false);
-    setLoading(false);
-    socket.close();
+      socket.on('message', function (msg, rinfo) { })
+      socket.removeAllListeners();
+      setIsSocketConnected(false);
+      setLoading(false);
+      socket.close();
     })
   }
 
@@ -125,8 +125,7 @@ export default () => {
           keyboardShouldPersistTaps={'handled'}>
           <PrimaryText>Find your ESP8266!</PrimaryText>
           <SecondaryText>
-            
-Click the button below to search the ESP8266 over the network!
+            Click the button below to search the ESP8266 over the network!
           </SecondaryText>
           <ButtonView>
             {!loading && (

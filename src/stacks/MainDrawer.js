@@ -80,6 +80,15 @@ const MainDrawer = props => {
             <TextItem>Reload</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
+
+        <StyledTouchableOpacity
+          onPress={() => props.navigation.navigate('ConnectBluetooth')}>
+          <Opcoes>
+            <MaterialIcons name="bluetooth" size={28} style={{color: 'white'}} />
+            <TextItem>ConnectBluetooth</TextItem>
+          </Opcoes>
+  </StyledTouchableOpacity>
+
       </ViewItem>
     </Container>
   );
