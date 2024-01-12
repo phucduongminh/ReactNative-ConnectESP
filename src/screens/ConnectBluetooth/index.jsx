@@ -1,12 +1,17 @@
 import React, {useState} from 'react';
 import {
   TouchableOpacity,
-  Button,
   PermissionsAndroid,
   View,
-  Text,
   LogBox,
+  Alert,
+  Text,
+  StatusBar,
+  ScrollView,
 } from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import styleGlobal from '../../styles/global';
+import LinearGradient from 'react-native-linear-gradient';
 
 import base64 from 'react-native-base64';
 
@@ -14,7 +19,8 @@ import CheckBox from '@react-native-community/checkbox';
 
 import {BleManager, Device} from 'react-native-ble-plx';
 import { useBluetoothStatus } from 'react-native-bluetooth-status';
-import {styles} from './styles';
+import {styles, Container, Header, H1, PrimaryText} from './styles';
+import db from '../../../db.json';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -47,12 +53,12 @@ export default ({navigation}) => {
 
   const [message, setMessage] = useState('Nothing Yet');
   const [boxValue, setBoxValue] = useState(false);
-  const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
+const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
 
   // Scans availbale BLT Devices and then call connectDevice
   async function scanDevices() {
     try {
-      // kiểm tra trạng thái bluetooth
+// kiểm tra trạng thái bluetooth
       if (!btStatus) {
         // yêu cầu người dùng bật bluetooth
         await setBluetooth(true)
@@ -64,8 +70,6 @@ export default ({navigation}) => {
         {
           title: 'Permission Bluetooth',
           message: 'Requirement for Bluetooth',
-          buttonNeutral: 'Later',
-          buttonNegative: 'Cancel',
           buttonPositive: 'OK',
         },
       );
@@ -77,7 +81,7 @@ export default ({navigation}) => {
         // bắt đầu quét thiết bị
         BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
           if (error) {
-            throw error; // ném lỗi nếu có
+            //throw error; // ném lỗi nếu có
           }
   
           if (scannedDevice && scannedDevice.name == 'BLEExample') {
@@ -95,7 +99,7 @@ export default ({navigation}) => {
         }, 5000);
       } else {
         // nếu người dùng không cấp quyền
-        console.warn('Permission denied');
+        Alert.alert("Permission Bluetooth","Requirement for Bluetooth")
       }
     } catch (error) {
       // xử lý lỗi nếu có
@@ -209,60 +213,62 @@ export default ({navigation}) => {
   }
 
   return (
-    <View>
-      <View style={{paddingBottom: 200}}></View>
-
-      {/* Title */}
-      <View style={styles.rowView}>
-        <Text style={styles.titleText}>BLE Example</Text>
-      </View>
-
-      <View style={{paddingBottom: 20}}></View>
-
-      {/* Connect Button */}
-      <View style={styles.rowView}>
-        <TouchableOpacity style={{width: 120}}>
-          {!isConnected ? (
-            <Button
-              title="Connect"
-              onPress={() => {
-                scanDevices();
-              }}
-              disabled={false}
-            />
+    <Container>
+      <StatusBar
+        backgroundColor={db.theme.colors.statuBar}
+        barStyle="light-content"
+      />
+      <Header>
+        <H1>Connect BlueTooth</H1>
+      </Header>
+      <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
+      <ScrollView
+        style={styleGlobal.scrollViewSignIn}>
+        <PrimaryText>{message}</PrimaryText>
+        <View style={{paddingBottom: 20}}></View>
+            {!isConnected ? (
+            <TouchableOpacity
+            disabled={false}
+            style={[styleGlobal.signIn,{width:"50%",left:"25%",right:"25%"}]}
+            onPress={() => {
+              scanDevices();
+            }}>
+            <LinearGradient
+              colors={
+                [db.theme.colors.primary, db.theme.colors.primary]
+              }
+              style={styleGlobal.signIn}>
+              <Text style={styleGlobal.textBtnSignIn}>Connect</Text>
+            </LinearGradient>
+          </TouchableOpacity>
           ) : (
-            <Button
-              title="Disonnect"
+            <TouchableOpacity
+              disabled={false}
+              style={[styleGlobal.signIn,{width:"50%",left:"25%",right:"25%"},styleGlobal.signInColor]}
               onPress={() => {
                 disconnectDevice();
-              }}
-              disabled={false}
-            />
+              }}>
+              <LinearGradient
+                colors={
+                  [db.theme.colors.primary, db.theme.colors.primary]
+                }
+                style={styleGlobal.signIn}>
+                <Text style={styleGlobal.textBtnSignIn}>Disconnect</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           )}
-        </TouchableOpacity>
-      </View>
-
-      <View style={{paddingBottom: 20}}></View>
-
-      {/* Monitored Value */}
-
-      <View style={styles.rowView}>
-        <Text style={styles.baseText}>{message}</Text>
-      </View>
-
-      <View style={{paddingBottom: 20}}></View>
-
+      </ScrollView>
       {/* Checkbox */}
       <View style={styles.rowView}>
         <CheckBox
           disabled={false}
           value={boxValue}
           onValueChange={newValue => {
-            // setBoxValue(newValue);
             sendBoxValue(BoolToString(newValue));
           }}
         />
       </View>
-    </View>
+    </Animatable.View>
+  </Container>
   );
 }
