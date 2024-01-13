@@ -89,6 +89,14 @@ const MainDrawer = props => {
           </Opcoes>
   </StyledTouchableOpacity>
 
+  <StyledTouchableOpacity
+          onPress={() => props.navigation.navigate('APMode')}>
+          <Opcoes>
+            <MaterialIcons name="bluetooth" size={28} style={{color: 'white'}} />
+            <TextItem>APMode</TextItem>
+          </Opcoes>
+  </StyledTouchableOpacity>
+
       </ViewItem>
     </Container>
   );
