@@ -38,9 +38,9 @@ function StringToBool(input) {
 
 function BoolToString(input) {
   if (input) {
-    return '1';
+    return 'Value 1';
   } else {
-    return '0';
+    return 'Value 0';
   }
 }
 
@@ -171,7 +171,6 @@ const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
         device
           .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
           .then(valenc => {
-            setBoxValue(StringToBool(base64.decode(valenc?.value)));
           });
 
         //monitor values and tell what to do when receiving an update
@@ -198,7 +197,6 @@ const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
           BOX_UUID,
           (error, characteristic) => {
             if (characteristic?.value != null) {
-              setBoxValue(StringToBool(base64.decode(characteristic?.value)));
               console.log(
                 'Box Value update received: ',
                 base64.decode(characteristic?.value),
@@ -257,17 +255,19 @@ const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
               </LinearGradient>
             </TouchableOpacity>
           )}
-      </ScrollView>
-      {/* Checkbox */}
+          {/* Checkbox */}
       <View style={styles.rowView}>
         <CheckBox
           disabled={false}
           value={boxValue}
           onValueChange={newValue => {
+            setBoxValue(newValue)
             sendBoxValue(BoolToString(newValue));
           }}
         />
+        <Text style={{marginTop:5}}>Check to send message!</Text>
       </View>
+      </ScrollView>
     </Animatable.View>
   </Container>
   );

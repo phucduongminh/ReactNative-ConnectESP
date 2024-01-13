@@ -10,7 +10,6 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   rowView: {
-    justifyContent: 'space-around',
     alignItems: 'flex-start',
     flexDirection: 'row',
   },
