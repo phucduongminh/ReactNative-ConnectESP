@@ -19,8 +19,6 @@ import db from '../../../db.json';
 
 export default ({ navigation }) => {
   // Khai báo các biến trạng thái cho tài khoản, mật khẩu và địa chỉ IP của ESP32
-  const [wifiname, setWifiname] = useState('');
-  const [password, setPassword] = useState('');
   const [espIP, setEspIP] = useState('');
   const [data, setData] = React.useState({
     email: '',
@@ -90,12 +88,10 @@ export default ({ navigation }) => {
 
   // Hàm gửi dữ liệu cho ESP32 qua chế độ Access point
   const sendData = async () => {
-    setWifiname(data.email)
-    setPassword(data.password)
      // Tạo một biến để kiểm tra xem có lỗi không
      let error = false;
     // Kiểm tra xem tài khoản và mật khẩu có rỗng không
-    if (wifiname === '' || password === '') {
+    if (data.email === '' || data.password === '') {
       Alert.alert('Không thành công', 'Vui lòng nhập tài khoản và mật khẩu');
       // Đặt biến error là true
       error = true;
@@ -120,7 +116,7 @@ export default ({ navigation }) => {
       // Thiết lập kiểu nội dung là application/json
       xhr.setRequestHeader('Content-Type', 'application/json');
       // Gửi dữ liệu dưới dạng chuỗi JSON
-      xhr.send(JSON.stringify({ wifiname: wifiname, password: password }));
+      xhr.send(JSON.stringify({ wifiname: data.email, password: data.password }));
       // Xử lý kết quả trả về
       xhr.onload = () => {
         // Nếu mã trạng thái là 200, tức là thành công
@@ -179,6 +175,7 @@ export default ({ navigation }) => {
             placeholder="Input Wi-fi Name"
             style={styleGlobal.textInputSignIn}
             autoCapitalize="none"
+            value={data.email}
             onChangeText={val => textEmail(val)}
             onEndEditing={e => handleValidEmail(e.nativeEvent.text)}
           />
@@ -198,10 +195,11 @@ export default ({ navigation }) => {
         <Action>
           <Feather name="lock" size={20} />
           <TextInput
-                          placeholder="Input Password"
+            placeholder="Input Password"
             secureTextEntry={data.secureTextEntry}
             style={styleGlobal.textInputSignIn}
             autoCapitalize="none"
+            value={data.password}
             onChangeText={val => handlePasswordChange(val)}
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
