@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { NetworkInfo } from 'react-native-network-info';
+import React, {useState, useEffect} from 'react';
+import {NetworkInfo} from 'react-native-network-info';
 import {useNavigation} from '@react-navigation/native';
 import {
   Text,
@@ -88,8 +88,8 @@ export default ({ navigation }) => {
 
   // Hàm gửi dữ liệu cho ESP32 qua chế độ Access point
   const sendData = async () => {
-     // Tạo một biến để kiểm tra xem có lỗi không
-     let error = false;
+    // Tạo một biến để kiểm tra xem có lỗi không
+    let error = false;
     // Kiểm tra xem tài khoản và mật khẩu có rỗng không
     if (data.email === '' || data.password === '') {
       Alert.alert('Không thành công', 'Vui lòng nhập tài khoản và mật khẩu');
@@ -116,7 +116,7 @@ export default ({ navigation }) => {
       // Thiết lập kiểu nội dung là application/json
       xhr.setRequestHeader('Content-Type', 'application/json');
       // Gửi dữ liệu dưới dạng chuỗi JSON
-      xhr.send(JSON.stringify({ wifiname: data.email, password: data.password }));
+      xhr.send(JSON.stringify({wifiname: data.email, password: data.password}));
       // Xử lý kết quả trả về
       xhr.onload = () => {
         // Nếu mã trạng thái là 200, tức là thành công
@@ -157,85 +157,85 @@ export default ({ navigation }) => {
 
   return (
     <Container>
-    <StatusBar
-      backgroundColor={db.theme.colors.statuBar}
-      barStyle="light-content"
-    />
-    <Header>
-              <H1>Provide your Wi-Fi to connect.</H1>
-    </Header>
-    <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
-      <ScrollView
-        style={styleGlobal.scrollViewSignIn}
-        keyboardShouldPersistTaps={'handled'}>
-        <Text style={styleGlobal.textSignIn}>Wi-fi Name:</Text>
-        <Action>
-          <MaterialIcons name="person" color={'black'} size={20} />
-          <TextInput
-            placeholder="Input Wi-fi Name"
-            style={styleGlobal.textInputSignIn}
-            autoCapitalize="none"
-            value={data.email}
-            onChangeText={val => textEmail(val)}
-            onEndEditing={e => handleValidEmail(e.nativeEvent.text)}
-          />
-          {data.check_textInputChange ? (
-            <Animatable.View animation="bounceIn">
-              <Feather name="check-circle" color="green" size={20} />
+      <StatusBar
+        backgroundColor={db.theme.colors.statuBar}
+        barStyle="light-content"
+      />
+      <Header>
+        <H1>Provide your Wi-Fi to connect.</H1>
+      </Header>
+      <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
+        <ScrollView
+          style={styleGlobal.scrollViewSignIn}
+          keyboardShouldPersistTaps={'handled'}>
+          <Text style={styleGlobal.textSignIn}>Wi-fi Name:</Text>
+          <Action>
+            <MaterialIcons name="person" color={'black'} size={20} />
+            <TextInput
+              placeholder="Input Wi-fi Name"
+              style={styleGlobal.textInputSignIn}
+              autoCapitalize="none"
+              value={data.email}
+              onChangeText={val => textEmail(val)}
+              onEndEditing={e => handleValidEmail(e.nativeEvent.text)}
+            />
+            {data.check_textInputChange ? (
+              <Animatable.View animation="bounceIn">
+                <Feather name="check-circle" color="green" size={20} />
+              </Animatable.View>
+            ) : null}
+          </Action>
+          {data.isValidEmail ? null : (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styleGlobal.errorMsg}>Required field!</Text>
             </Animatable.View>
-          ) : null}
-        </Action>
-        {data.isValidEmail ? null : (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styleGlobal.errorMsg}>Required field!</Text>
-          </Animatable.View>
-        )}
+          )}
 
-                  <Text style={styleGlobal.textSignIn}>Password:</Text>
-        <Action>
-          <Feather name="lock" size={20} />
-          <TextInput
-            placeholder="Input Password"
-            secureTextEntry={data.secureTextEntry}
-            style={styleGlobal.textInputSignIn}
-            autoCapitalize="none"
-            value={data.password}
-            onChangeText={val => handlePasswordChange(val)}
-          />
-          <TouchableOpacity onPress={updateSecureTextEntry}>
-            {data.secureTextEntry ? (
-              <Feather name="eye-off" color="grey" size={20} />
-            ) : (
-              <Feather name="eye" color="grey" size={20} />
-            )}
-          </TouchableOpacity>
-        </Action>
-        {data.isValidPassword ? null : (
-          <Animatable.View animation="fadeInLeft">
-            <Text style={styleGlobal.errorMsg}>
-                          The password must contain at least 8 characters.
-            </Text>
-          </Animatable.View>
-        )}
+          <Text style={styleGlobal.textSignIn}>Password:</Text>
+          <Action>
+            <Feather name="lock" size={20} />
+            <TextInput
+              placeholder="Input Password"
+              secureTextEntry={data.secureTextEntry}
+              style={styleGlobal.textInputSignIn}
+              autoCapitalize="none"
+              value={data.password}
+              onChangeText={val => handlePasswordChange(val)}
+            />
+            <TouchableOpacity onPress={updateSecureTextEntry}>
+              {data.secureTextEntry ? (
+                <Feather name="eye-off" color="grey" size={20} />
+              ) : (
+                <Feather name="eye" color="grey" size={20} />
+              )}
+            </TouchableOpacity>
+          </Action>
+          {data.isValidPassword ? null : (
+            <Animatable.View animation="fadeInLeft">
+              <Text style={styleGlobal.errorMsg}>
+                The password must contain at least 8 characters.
+              </Text>
+            </Animatable.View>
+          )}
 
-        <ButtonSign>
-          <TouchableOpacity
-            disabled={!data.isValidEmail || !data.isValidPassword}
-            style={styleGlobal.signIn}
-            onPress={sendData}>
-            <LinearGradient
-              colors={
-                !data.isValidEmail || !data.isValidPassword
-                  ? ['#8a92a8', '#8a92a8']
-                  : [db.theme.colors.primary, db.theme.colors.primary]
-              }
-              style={styleGlobal.signIn}>
-              <Text style={styleGlobal.textBtnSignIn}>Sign In</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </ButtonSign>
-      </ScrollView>
-    </Animatable.View>
-  </Container>
+          <ButtonSign>
+            <TouchableOpacity
+              disabled={!data.isValidEmail || !data.isValidPassword}
+              style={styleGlobal.signIn}
+              onPress={sendData}>
+              <LinearGradient
+                colors={
+                  !data.isValidEmail || !data.isValidPassword
+                    ? ['#8a92a8', '#8a92a8']
+                    : [db.theme.colors.primary, db.theme.colors.primary]
+                }
+                style={styleGlobal.signIn}>
+                <Text style={styleGlobal.textBtnSignIn}>Sign In</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </ButtonSign>
+        </ScrollView>
+      </Animatable.View>
+    </Container>
   );
-}
+};

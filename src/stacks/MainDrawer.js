@@ -13,7 +13,7 @@ const MainDrawer = props => {
   return (
     <Container>
       <ViewItem>
-      <StyledTouchableOpacity
+        <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Home')}>
           <Opcoes>
             <MaterialIcons name="home" size={28} style={{color: 'white'}} />
@@ -32,7 +32,11 @@ const MainDrawer = props => {
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('NewDevice')}>
           <Opcoes>
-            <MaterialIcons name="settings-remote" size={28} style={{color: 'white'}} />
+            <MaterialIcons
+              name="settings-remote"
+              size={28}
+              style={{color: 'white'}}
+            />
             <TextItem>New Controller</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
@@ -45,13 +49,13 @@ const MainDrawer = props => {
           </Opcoes>
         </StyledTouchableOpacity>*/}
 
-        <StyledTouchableOpacity
+        {/* <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('SignIn')}>
           <Opcoes>
             <MaterialIcons name="login" size={28} style={{color: 'white'}} />
             <TextItem>SignIn</TextItem>
           </Opcoes>
-        </StyledTouchableOpacity>
+        </StyledTouchableOpacity> */}
 
         {/*<StyledTouchableOpacity
           onPress={() => props.navigation.navigate('SignUp')}>
@@ -74,29 +78,32 @@ const MainDrawer = props => {
   </StyledTouchableOpacity>*/}
 
         <StyledTouchableOpacity
+          onPress={() => props.navigation.navigate('ConnectBluetooth')}>
+          <Opcoes>
+            <MaterialIcons
+              name="bluetooth"
+              size={28}
+              style={{color: 'white'}}
+            />
+            <TextItem>ConnectBluetooth</TextItem>
+          </Opcoes>
+        </StyledTouchableOpacity>
+
+        <StyledTouchableOpacity
+          onPress={() => props.navigation.navigate('APMode')}>
+          <Opcoes>
+            <MaterialIcons name="login" size={28} style={{color: 'white'}} />
+            <TextItem>APMode</TextItem>
+          </Opcoes>
+        </StyledTouchableOpacity>
+
+        <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Preload')}>
           <Opcoes>
             <MaterialIcons name="refresh" size={28} style={{color: 'white'}} />
             <TextItem>Reload</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
-
-        <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('ConnectBluetooth')}>
-          <Opcoes>
-            <MaterialIcons name="bluetooth" size={28} style={{color: 'white'}} />
-            <TextItem>ConnectBluetooth</TextItem>
-          </Opcoes>
-  </StyledTouchableOpacity>
-
-  <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('APMode')}>
-          <Opcoes>
-            <MaterialIcons name="bluetooth" size={28} style={{color: 'white'}} />
-            <TextItem>APMode</TextItem>
-          </Opcoes>
-  </StyledTouchableOpacity>
-
       </ViewItem>
     </Container>
   );

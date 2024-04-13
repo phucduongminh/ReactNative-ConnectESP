@@ -6,7 +6,9 @@ import {
   TextInput,
   StatusBar,
   ScrollView,
+  Alert,
 } from 'react-native';
+import axios from 'axios';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
@@ -35,9 +37,24 @@ export default () => {
   });
 
   const handleSignClick = async () => {
-    navigation.reset({
-      routes: [{name: 'Home'}],
-    });
+    //console.log(process.env.API_URL);
+    axios
+      .post('http://192.168.x.x:3001/api/users/register', {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      })
+      .then(response => {
+        if (response.data.success) {
+          Alert.alert('Success', 'You have registered successfully');
+          navigation.navigate('SignIn');
+        } else {
+          Alert.alert('Error', response.data.message);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   const textName = val => {
@@ -125,7 +142,7 @@ export default () => {
         <GoBack onPress={() => navigation.navigate('SignIn')}>
           <FontAwesome name="arrow-left" size={20} style={{color: '#ffff'}} />
         </GoBack>
-                <H1>SIGN UP</H1>
+        <H1>SIGN UP</H1>
       </Header>
       <Animatable.View animation="fadeInUpBig" style={styleGlobal.footer}>
         <ScrollView
@@ -137,7 +154,7 @@ export default () => {
           <Action>
             <MaterialIcons name="person" color={'black'} size={20} />
             <TextInput
-                            placeholder="Enter your name"
+              placeholder="Enter your name"
               style={styleGlobal.textInputSignIn}
               autoCapitalize="none"
               onChangeText={val => textName(val)}
@@ -146,7 +163,7 @@ export default () => {
           {data.isValidName ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styleGlobal.errorMsg}>
-                            The username must be 4 characters long.
+                The username must be 4 characters long.
               </Text>
             </Animatable.View>
           )}
@@ -155,7 +172,7 @@ export default () => {
           <Action>
             <MaterialIcons name="email" color={'black'} size={20} />
             <TextInput
-                            placeholder="Enter a valid email"
+              placeholder="Enter a valid email"
               style={styleGlobal.textInputSignIn}
               autoCapitalize="none"
               onChangeText={val => textEmail(val)}
@@ -167,11 +184,11 @@ export default () => {
             </Animatable.View>
           )}
 
-                    <Text style={styleGlobal.textSignIn}>Password</Text>
+          <Text style={styleGlobal.textSignIn}>Password</Text>
           <Action>
             <Feather name="lock" size={20} />
             <TextInput
-                            placeholder="Your password"
+              placeholder="Your password"
               secureTextEntry={data.viewPassword ? true : false}
               style={styleGlobal.textInputSignIn}
               autoCapitalize="none"
@@ -188,16 +205,16 @@ export default () => {
           {data.isValidPassword ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styleGlobal.errorMsg}>
-                            The password must contain at least 6 characters.
+                The password must contain at least 6 characters.
               </Text>
             </Animatable.View>
           )}
 
-                    <Text style={styleGlobal.textSignIn}>Confirm Password</Text>
+          <Text style={styleGlobal.textSignIn}>Confirm Password</Text>
           <Action>
             <Feather name="lock" size={20} />
             <TextInput
-                            placeholder="Confirm your password"
+              placeholder="Confirm your password"
               secureTextEntry={data.viewConfirmPassword ? true : false}
               style={styleGlobal.textInputSignIn}
               autoCapitalize="none"
@@ -214,7 +231,7 @@ export default () => {
           {data.isValidConfirm ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styleGlobal.errorMsg}>
-                            The password must contain at least 6 characters.
+                The password must contain at least 6 characters.
               </Text>
             </Animatable.View>
           )}
