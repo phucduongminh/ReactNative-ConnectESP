@@ -1,0 +1,12 @@
+{
+  "plugins": [
+    ["module:babel-plugin-dotenv", {
+      "moduleName": "process.env",
+      "path": ".env",
+      "blacklist": null,
+      "whitelist": null,
+      "safe": false,
+      "allowUndefined": true
+    }]
+  ]
+}

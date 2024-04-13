@@ -6,6 +6,7 @@ import {
   TextInput,
   StatusBar,
   ScrollView,
+  Alert,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -14,6 +15,7 @@ import {Container, Action, ButtonSign, Header, H1} from './styles';
 import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import db from '../../../db.json';
+import axios from 'axios';
 
 export default () => {
   const navigation = useNavigation();
@@ -28,9 +30,22 @@ export default () => {
   });
 
   const handleSignClick = async () => {
-    navigation.reset({
-      routes: [{name: 'Home'}],
-    });
+    axios
+      .post('http://192.168.x.x:3001/api/users/login', {
+        email: data.email,
+        password: data.password,
+      })
+      .then(response => {
+        if (response.data.success) {
+          Alert.alert('Success', 'Login Successfull');
+          navigation.navigate('Home');
+        } else {
+          Alert.alert('Error', response.data.message);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   const handleMessageButtonClick = () => {
@@ -100,7 +115,7 @@ export default () => {
         barStyle="light-content"
       />
       <Header>
-                <H1>SIGN IN</H1>
+        <H1>SIGN IN</H1>
       </Header>
       <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
         <ScrollView
@@ -110,7 +125,7 @@ export default () => {
           <Action>
             <MaterialIcons name="person" color={'black'} size={20} />
             <TextInput
-                            placeholder="Your E-mail"
+              placeholder="Your E-mail"
               style={styleGlobal.textInputSignIn}
               autoCapitalize="none"
               onChangeText={val => textEmail(val)}
@@ -128,11 +143,11 @@ export default () => {
             </Animatable.View>
           )}
 
-                    <Text style={styleGlobal.textSignIn}>Password</Text>
+          <Text style={styleGlobal.textSignIn}>Password</Text>
           <Action>
             <Feather name="lock" size={20} />
             <TextInput
-                            placeholder="Your password"
+              placeholder="Your password"
               secureTextEntry={data.secureTextEntry}
               style={styleGlobal.textInputSignIn}
               autoCapitalize="none"
@@ -149,7 +164,7 @@ export default () => {
           {data.isValidPassword ? null : (
             <Animatable.View animation="fadeInLeft">
               <Text style={styleGlobal.errorMsg}>
-                            The password must contain at least 6 characters.
+                The password must contain at least 6 characters.
               </Text>
             </Animatable.View>
           )}

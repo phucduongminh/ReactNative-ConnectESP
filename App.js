@@ -31,7 +31,7 @@ const Drawer = createDrawerNavigator();
 function DrawerNavigator({navigation}) {
   return (
     <Drawer.Navigator
-      initialRouteName="APMode"
+      initialRouteName="SignIn"
       drawerContent={
         () => <MainDrawer navigation={navigation} />
       }>
@@ -56,7 +56,7 @@ function DrawerNavigator({navigation}) {
 const StackApp = createStackNavigator();
 function StackNavigator({navigation}) {
   return (
-    <StackApp.Navigator initialRouteName="APMode">
+    <StackApp.Navigator initialRouteName="SignIn">
       <StackApp.Screen
         name="Drawer"
         component={DrawerNavigator}
