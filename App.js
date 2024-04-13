@@ -19,6 +19,7 @@ import Devices from './src/screens/Devices'
 import Control from './src/screens/Control'
 import ACControl from './src/screens/ACControl'
 import ConnectBluetooth from './src/screens/ConnectBluetooth';
+import APMode from './src/screens/APMode'
 import { SocketProvider } from './SocketContext';
 import theme from './theme'
 
@@ -30,7 +31,7 @@ const Drawer = createDrawerNavigator();
 function DrawerNavigator({navigation}) {
   return (
     <Drawer.Navigator
-      initialRouteName="Preload"
+      initialRouteName="APMode"
       drawerContent={
         () => <MainDrawer navigation={navigation} />
       }>
@@ -47,6 +48,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="Control" component={Control} />
       <Drawer.Screen name="ACControl" component={ACControl} />
       <Drawer.Screen name="ConnectBluetooth" component={ConnectBluetooth} />
+      <Drawer.Screen name="APMode" component={APMode} />
     </Drawer.Navigator>
   );
 }
@@ -54,7 +56,7 @@ function DrawerNavigator({navigation}) {
 const StackApp = createStackNavigator();
 function StackNavigator({navigation}) {
   return (
-    <StackApp.Navigator initialRouteName="Preload">
+    <StackApp.Navigator initialRouteName="APMode">
       <StackApp.Screen
         name="Drawer"
         component={DrawerNavigator}

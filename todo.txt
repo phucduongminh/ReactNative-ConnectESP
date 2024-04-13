@@ -1,1 +1,1 @@
-Need to ask for bluetooth, but it now ask for location )))).
+Need to ask for bluetooth, but it now ask for location )))). //Android under 12 need to do that ))

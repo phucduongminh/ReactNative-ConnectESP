@@ -101,7 +101,6 @@ export default () => {
       />
       <Header>
                 <H1>SIGN IN</H1>
-        {/* ESPAÇO PARA TEXTO OU IMAGEM */}
       </Header>
       <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
         <ScrollView
@@ -134,7 +133,7 @@ export default () => {
             <Feather name="lock" size={20} />
             <TextInput
                             placeholder="Your password"
-              secureTextEntry={data.secureTextEntry ? true : false}
+              secureTextEntry={data.secureTextEntry}
               style={styleGlobal.textInputSignIn}
               autoCapitalize="none"
               onChangeText={val => handlePasswordChange(val)}
