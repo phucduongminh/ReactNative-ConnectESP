@@ -5,7 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {ThemeProvider} from 'styled-components';
 import {Provider} from 'react-redux';
-import { store } from './src/redux/store';
+import {store} from './src/redux/store';
 
 import MainDrawer from './src/stacks/MainDrawer';
 import Preload from './src/screens/Preload';
@@ -32,20 +32,10 @@ const navOptionHandler = () => ({
 
 const Drawer = createDrawerNavigator();
 function DrawerNavigator({navigation}) {
-  //const {user} = useSelector((state)=>state.user);
   return (
     <Drawer.Navigator
-      initialRouteName="SignIn"
       drawerContent={() => <MainDrawer navigation={navigation} />}>
       <Drawer.Screen name="Preload" component={Preload} />
-      <Drawer.Screen
-        name="SignIn"
-        component={SignIn}
-        options={{
-          drawerItemStyle: {display: 'none'},
-        }}
-      />
-      <Drawer.Screen name="SignUp" component={SignUp} />
       <Drawer.Screen name="Historic" component={Historic} />
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
@@ -62,9 +52,17 @@ function DrawerNavigator({navigation}) {
 }
 
 const StackApp = createStackNavigator();
-function StackNavigator({navigation}) {
+function AuthStack() {
   return (
-    <StackApp.Navigator initialRouteName="SignIn">
+    <StackApp.Navigator initialRouteName="SignIn" screenOptions={{ headerShown: false }}>
+      <StackApp.Screen name="SignIn" component={SignIn} />
+      <StackApp.Screen name="SignUp" component={SignUp} />
+    </StackApp.Navigator>
+  );
+}
+function MainStack({navigation}) {
+  return (
+    <StackApp.Navigator initialRouteName="Home" >
       <StackApp.Screen
         name="Drawer"
         component={DrawerNavigator}
@@ -74,13 +72,18 @@ function StackNavigator({navigation}) {
   );
 }
 
+function StackSelector() {
+  const { user } = useSelector(state => state.user);
+  return user ? <MainStack /> : <AuthStack />;
+}
+
 export default function App() {
   return (
     <Provider store={store}>
       <SocketProvider>
         <ThemeProvider theme={theme.dark}>
           <NavigationContainer>
-            <StackNavigator />
+            <StackSelector />
           </NavigationContainer>
         </ThemeProvider>
       </SocketProvider>

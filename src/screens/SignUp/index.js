@@ -39,7 +39,7 @@ export default () => {
   const handleSignClick = async () => {
     //console.log(process.env.API_URL);
     axios
-      .post('http://192.168.x.x:3001/api/users/register', {
+      .post('http://192.168.1.11:3001/api/users/register', {
         name: data.name,
         email: data.email,
         password: data.password,
@@ -54,6 +54,14 @@ export default () => {
       })
       .catch(error => {
         console.error(error);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          Alert.alert('Error', error.response.data.message);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          Alert.alert('Error', 'Something went wrong. Please try again.');
+        }
       });
   };
 
