@@ -16,8 +16,11 @@ import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import db from '../../../db.json';
 import axios from 'axios';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../redux/slices/user';
 
 export default () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [data, setData] = React.useState({
     email: '',
@@ -31,13 +34,14 @@ export default () => {
 
   const handleSignClick = async () => {
     axios
-      .post('http://192.168.x.x:3001/api/users/login', {
+      .post('http://192.168.32.1:3001/api/users/login', {
         email: data.email,
         password: data.password,
       })
       .then(response => {
         if (response.data.success) {
           Alert.alert('Success', 'Login Successfull');
+          dispatch(setUser({user: true}));
           navigation.navigate('Home');
         } else {
           Alert.alert('Error', response.data.message);
