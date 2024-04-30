@@ -7,12 +7,14 @@ import {
   StatusBar,
   ScrollView,
   Alert,
+  BackHandler,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import {Container, Action, ButtonSign, Header, H1} from './styles';
 import * as Animatable from 'react-native-animatable';
+import {CommonActions} from '@react-navigation/native';
 import styleGlobal from '../../styles/global';
 import db from '../../../db.json';
 import axios from 'axios';
@@ -42,7 +44,20 @@ export default () => {
         if (response.data.success) {
           Alert.alert('Success', 'Login Successfull');
           dispatch(setUser({user: true}));
-          navigation.navigate('Home');
+          navigation.dispatch(
+            CommonActions.reset({index: 0, routes: [{name: 'Drawer'}]}),
+          );
+
+          // Add this to prevent the hardware back button from navigating back
+          const backAction = () => {
+            return true; // This will prevent the event from bubbling up and the default back button action from being executed
+          };
+          const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+          );
+
+          return () => backHandler.remove();
         } else {
           Alert.alert('Error', response.data.message);
         }

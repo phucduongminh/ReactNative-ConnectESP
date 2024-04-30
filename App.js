@@ -34,6 +34,7 @@ const Drawer = createDrawerNavigator();
 function DrawerNavigator({navigation}) {
   return (
     <Drawer.Navigator
+      initialRouteName="Home"
       drawerContent={() => <MainDrawer navigation={navigation} />}>
       <Drawer.Screen name="Preload" component={Preload} />
       <Drawer.Screen name="Historic" component={Historic} />
@@ -52,29 +53,19 @@ function DrawerNavigator({navigation}) {
 }
 
 const StackApp = createStackNavigator();
-function AuthStack() {
-  return (
-    <StackApp.Navigator initialRouteName="SignIn" screenOptions={{ headerShown: false }}>
-      <StackApp.Screen name="SignIn" component={SignIn} />
-      <StackApp.Screen name="SignUp" component={SignUp} />
-    </StackApp.Navigator>
-  );
-}
 function MainStack({navigation}) {
+  const { user } = useSelector(state => state.user);
   return (
-    <StackApp.Navigator initialRouteName="Home" >
+    <StackApp.Navigator screenOptions={{ headerShown: false }}>
       <StackApp.Screen
         name="Drawer"
         component={DrawerNavigator}
         options={navOptionHandler}
       />
+      <StackApp.Screen name="SignIn" component={SignIn} />
+      <StackApp.Screen name="SignUp" component={SignUp} />
     </StackApp.Navigator>
   );
-}
-
-function StackSelector() {
-  const { user } = useSelector(state => state.user);
-  return user ? <MainStack /> : <AuthStack />;
 }
 
 export default function App() {
@@ -83,7 +74,7 @@ export default function App() {
       <SocketProvider>
         <ThemeProvider theme={theme.dark}>
           <NavigationContainer>
-            <StackSelector />
+            <MainStack />
           </NavigationContainer>
         </ThemeProvider>
       </SocketProvider>
