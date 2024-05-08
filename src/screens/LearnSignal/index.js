@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import 'react-native-get-random-values';
 import {v4} from 'uuid';
 
@@ -15,7 +15,7 @@ const data = [
         type: 'button',
         icon: 'power',
         action: () => {
-          console.log('Power button clicked!');
+          console.log('Power button pressed!');
         },
       },
       {id: v4(), type: 'button', icon: 'tv', action: () => {}},

@@ -5,12 +5,10 @@ import List from './List';
 
 import {Container} from './styled';
 
-export default ({navigation, learn}) => {
+export default ({navigation}) => {
   function handleNavigate(name) {
     if (name === 'Television') {
-      learn === false || learn == undefined
-        ? navigation.navigate('Brands')
-        : navigation.navigate('LearnSignal');
+      navigation.navigate('Brands');
     } else if (name === 'Air conditioner') {
       navigation.navigate('ACBrands');
     } else {

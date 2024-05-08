@@ -85,8 +85,7 @@ export default ({navigation}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styleGlobal.signIn, styleGlobal.signInColor]}
-            //</ScrollView>onPress={navigation.navigate('Devices', {learn: true})}
-            >
+            onPress={navigation.navigate('LearnSignal')}>
             <Text style={styleGlobal.textBtnSignUp}>Learn Signal</Text>
           </TouchableOpacity>
         </ScrollView>

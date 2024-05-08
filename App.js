@@ -22,6 +22,7 @@ import Control from './src/screens/Control';
 import ACControl from './src/screens/ACControl';
 import ConnectBluetooth from './src/screens/ConnectBluetooth';
 import APMode from './src/screens/APMode';
+import LearnSignal from './src/screens/LearnSignal';
 import {SocketProvider} from './SocketContext';
 import theme from './theme';
 import {useSelector} from 'react-redux';
@@ -48,6 +49,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="ACControl" component={ACControl} />
       <Drawer.Screen name="ConnectBluetooth" component={ConnectBluetooth} />
       <Drawer.Screen name="APMode" component={APMode} />
+      <Drawer.Screen name="LearnSignal" component={LearnSignal} />
     </Drawer.Navigator>
   );
 }
