@@ -39,7 +39,7 @@ const SpeechToTextScreen = () => {
       sampleRate: 16000,
       channels: 1,
       bitsPerSample: 16,
-      wavFile: 'audio.wav',
+      wavFile: 'test.wav',
     };
 
     await AudioRecord.init(options);
@@ -50,25 +50,15 @@ const SpeechToTextScreen = () => {
     const audioFile = await AudioRecord.stop();
 
     // Read the file as base64
-    const audioBase64 = await RNFS.readFile(audioFile, 'base64');
-
-    // Create a blob from the base64 string
-    const audioBlob = {
-      uri: `data:audio/wav;base64,${audioBase64}`,
-      type: 'audio/wav',
-      name: 'audio.wav',
-    };
-
-    const data = new FormData();
-    data.append('audio', audioBlob, 'audio.wav');
-    const gcsUri = 'gs://cloud-samples-data/speech/brooklyn_bridge.raw';
+    const audioData = await RNFS.readFile(audioFile, 'base64');
 
     try {
       const response = await axios.post(
-        'http://same_with_ipconfig:3001/api/speech/transcribe',
-        {gcsUri: gcsUri},
+        'http://ipconfig:3001/api/speech/transcribe', // Use your local IP address
+        {audio: audioData},
+        {headers: {'Content-Type': 'application/json'}},
       );
-      setText(JSON.stringify(response));
+      setText(response.data); // Ensure to use response.data to get the response body
     } catch (error) {
       console.error('Error making network request', error);
     }
