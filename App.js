@@ -26,6 +26,7 @@ import LearnSignal from './src/screens/LearnSignal';
 import {SocketProvider} from './SocketContext';
 import theme from './theme';
 import {useSelector} from 'react-redux';
+import SpeechToTextScreen from './src/screens/SpeechControl/SpeechToTextScreen';
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -56,9 +57,9 @@ function DrawerNavigator({navigation}) {
 
 const StackApp = createStackNavigator();
 function MainStack({navigation}) {
-  const { user } = useSelector(state => state.user);
+  const {user} = useSelector(state => state.user);
   return (
-    <StackApp.Navigator screenOptions={{ headerShown: false }}>
+    <StackApp.Navigator screenOptions={{headerShown: false}}>
       <StackApp.Screen
         name="Drawer"
         component={DrawerNavigator}
@@ -72,14 +73,17 @@ function MainStack({navigation}) {
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <SocketProvider>
-        <ThemeProvider theme={theme.dark}>
-          <NavigationContainer>
-            <MainStack />
-          </NavigationContainer>
-        </ThemeProvider>
-      </SocketProvider>
-    </Provider>
+    // <Provider store={store}>
+    //   <SocketProvider>
+    //     <ThemeProvider theme={theme.dark}>
+    //       <NavigationContainer>
+    //         <MainStack />
+    //       </NavigationContainer>
+    //     </ThemeProvider>
+    //   </SocketProvider>
+    // </Provider>
+    <>
+      <SpeechToTextScreen />
+    </>
   );
 }
