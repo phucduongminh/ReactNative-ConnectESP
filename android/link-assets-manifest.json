@@ -1,0 +1,245 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Black Italic.eot",
+      "sha1": "0cf85bbe9ee1600724d7148bcaadf33955570dc7"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Black Italic.otf",
+      "sha1": "50bb68c2b0de936785538fdbe672794625411bff"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Black Italic.woff",
+      "sha1": "51ab4264e6cc756380b9aff4a6b146f759ca09db"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Black.eot",
+      "sha1": "b81299532735a04d87e2e60f8deac7edd1d2b884"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Black.otf",
+      "sha1": "b5b24572c2628f78728faf2c4ec7b75cd4d2afc6"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Black.woff",
+      "sha1": "13bdd389c3df9718613679398bede53792075d4b"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Bold Italic.eot",
+      "sha1": "6579c328c3787bc8a5bb61783e431c202c80ae2d"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Bold Italic.otf",
+      "sha1": "b08225268334e20582c648c45e6736c16f8f4fcc"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Bold Italic.woff",
+      "sha1": "31db6c984cda6265ffc084777bf7607d53e20a2a"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Bold.eot",
+      "sha1": "4e68e937b9210363c206e27d5d648ba59a8a62f2"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Bold.otf",
+      "sha1": "c68db5b3242b9d336a295a0d986009ba0265acbc"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Bold.woff",
+      "sha1": "6f02c51562000fdfcf1627de4783b96724c8bcd9"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Heavy Italic.eot",
+      "sha1": "a209afbd2412713610ea5895dd980a36ddb57a2f"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Heavy Italic.otf",
+      "sha1": "985c3f0458476b4cb77f8e83d06547d121b0f1f7"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Heavy Italic.woff",
+      "sha1": "6f02913e73be765fbb512be01438918a7a0ee9f6"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Heavy.eot",
+      "sha1": "471b1a83762c7beb6cf4373951e77ef43f07c059"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Heavy.otf",
+      "sha1": "80ad9a05a5fef08425fadd81c6e6650cbd90fb59"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Heavy.woff",
+      "sha1": "a4081f8d8c19c025cb61332308fd0c16ba801302"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Italic.eot",
+      "sha1": "0150aae8ea2cfc218ab2a2de82e76a993e6e6673"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Italic.otf",
+      "sha1": "4df2ca98bc6f16a895ff42f6884f504c0f191c5d"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Italic.woff",
+      "sha1": "bccb24c5d518b4e54f76dddc08d27a37762cc757"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Light Italic.eot",
+      "sha1": "3212299b6c81738205c1f8e19c83b6246b9738a8"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Light Italic.otf",
+      "sha1": "e63b11d4ccfb9a9b1154dc77be9a3c45ee9a5487"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Light Italic.woff",
+      "sha1": "2fd69d8e891f5db755165c091f1f519c4a13fe2f"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Light.eot",
+      "sha1": "2a1668653720af5f33c2678897dbd029ed2a220d"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Light.otf",
+      "sha1": "f46e6bb2494d3c7cdbbd30be6328742dff067914"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Light.woff",
+      "sha1": "21a9e12277bf126324a0535f6b9020923376a66d"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Medium Italic.eot",
+      "sha1": "9ed4b504e2ed83f82d2be6daff487ab74f968e38"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Medium Italic.otf",
+      "sha1": "3a4f0be52ef310f248c3656e7c3a3ac0dc4baaa3"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Medium Italic.woff",
+      "sha1": "b1096903b36d29f07ce24db8b5c91e926887016a"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Medium.eot",
+      "sha1": "9f269d6158f7611a414aa6da13c32402fb8ecb99"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Medium.otf",
+      "sha1": "858bfba67dcb4788dd9cdb261b707a78e2075334"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Medium.woff",
+      "sha1": "9cc23555c65febbe7a1113dbb8ff8848cf9c8f14"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Regular.eot",
+      "sha1": "e76bc5bce5846e7764a79256081997ab9bbbe49f"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Regular.otf",
+      "sha1": "ed7c84d6f0b3bd4764934704c927122f703f2eef"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Regular.woff",
+      "sha1": "27d833cd9be8d9e68505b6f0d0839124970f4ec6"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy SemiBold Italic.eot",
+      "sha1": "86339d8a7de4ffec00d84ac78ef4c9ab548e9d3b"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy SemiBold Italic.otf",
+      "sha1": "882abb058c1fc2c7259201f2383bd1c7cf8f4d64"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy SemiBold Italic.woff",
+      "sha1": "75a853462fe96e0f1cfa28ff15e60a1e40acaed0"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy SemiBold.eot",
+      "sha1": "e6c6177665d58edb7db5f37a25785dda5b28d8bb"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy SemiBold.otf",
+      "sha1": "ac6180999c6054cf53128046cf29bb53c8266102"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy SemiBold.woff",
+      "sha1": "01bc80beb6d079712fa007cc408ed09bb4d6405a"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Thin Italic.eot",
+      "sha1": "77025e31d5806553d242d1278915dd809d73a756"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Thin Italic.otf",
+      "sha1": "cfb194e3dcdccee748d56e404485c7ebf22e26db"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Thin Italic.woff",
+      "sha1": "67a53613bc43e97c0d5575f9b6cef64a84a03116"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Thin.eot",
+      "sha1": "77e52dbf138786157d4878ab15f60de6feca00dd"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Thin.otf",
+      "sha1": "361936839dea039e037f7d92fdd8e2f002fd45d3"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Thin.woff",
+      "sha1": "faae3b05a8f2f31bd9963efa94307e2aec4d69ee"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy XBold Italic.eot",
+      "sha1": "9f67d7a80e1b6f1bf66d015771b5b2b24529da34"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy XBold Italic.otf",
+      "sha1": "a11f10b98914d10dfe5af4986d4110b4be2105f1"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy XBold Italic.woff",
+      "sha1": "561ffbe8987635364a65536fc7631d7d1088f0fd"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy XBold.eot",
+      "sha1": "bda7adc58c3d754c58c52e54123d44b377efc4e6"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy XBold.otf",
+      "sha1": "9c90dc80ef312818a566232e5bb916b5bada6622"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy XBold.woff",
+      "sha1": "842a3cba4c1a372a2edab310d61600d8dd5133c4"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight Italic.eot",
+      "sha1": "f93e1927f0f4463c181190bca1b4b988e9009026"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight Italic.otf",
+      "sha1": "e620bd82a1e5f358e7b98169585eedbed0123945"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight Italic.woff",
+      "sha1": "170ebf235f129a7eac720415ad5d3f921fba97c8"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight.eot",
+      "sha1": "f0c926a66ed5c8b6de01497d20b55255aca5cb4c"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight.otf",
+      "sha1": "b0bd50fd7466dbd77f1284a7c7bff838ddaebc38"
+    },
+    {
+      "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight.woff",
+      "sha1": "b1a5cd87a39624bca4621139b55c8fbf5281433a"
+    }
+  ]
+}

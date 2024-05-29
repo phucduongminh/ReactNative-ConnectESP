@@ -3,7 +3,9 @@ import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import { ThemeProvider } from 'styled-components'
+import {ThemeProvider} from 'styled-components';
+import {Provider} from 'react-redux';
+import {store} from './src/redux/store';
 
 import MainDrawer from './src/stacks/MainDrawer';
 import Preload from './src/screens/Preload';
@@ -13,15 +15,17 @@ import Historic from './src/screens/Historic';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
 import NewDevice from './src/screens/NewDevice';
-import Brands from './src/screens/Brands'
-import ACBrands from './src/screens/ACBrands'
-import Devices from './src/screens/Devices'
-import Control from './src/screens/Control'
-import ACControl from './src/screens/ACControl'
+import Brands from './src/screens/Brands';
+import ACBrands from './src/screens/ACBrands';
+import Devices from './src/screens/Devices';
+import Control from './src/screens/Control';
+import ACControl from './src/screens/ACControl';
 import ConnectBluetooth from './src/screens/ConnectBluetooth';
-import APMode from './src/screens/APMode'
-import { SocketProvider } from './SocketContext';
-import theme from './theme'
+import APMode from './src/screens/APMode';
+import LearnSignal from './src/screens/LearnSignal';
+import {SocketProvider} from './SocketContext';
+import theme from './theme';
+import {useSelector} from 'react-redux';
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -31,13 +35,9 @@ const Drawer = createDrawerNavigator();
 function DrawerNavigator({navigation}) {
   return (
     <Drawer.Navigator
-      initialRouteName="SignIn"
-      drawerContent={
-        () => <MainDrawer navigation={navigation} />
-      }>
+      initialRouteName="Home"
+      drawerContent={() => <MainDrawer navigation={navigation} />}>
       <Drawer.Screen name="Preload" component={Preload} />
-      <Drawer.Screen name="SignIn" component={SignIn} />
-      <Drawer.Screen name="SignUp" component={SignUp} />
       <Drawer.Screen name="Historic" component={Historic} />
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
@@ -49,31 +49,37 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="ACControl" component={ACControl} />
       <Drawer.Screen name="ConnectBluetooth" component={ConnectBluetooth} />
       <Drawer.Screen name="APMode" component={APMode} />
+      <Drawer.Screen name="LearnSignal" component={LearnSignal} />
     </Drawer.Navigator>
   );
 }
 
 const StackApp = createStackNavigator();
-function StackNavigator({navigation}) {
+function MainStack({navigation}) {
+  const { user } = useSelector(state => state.user);
   return (
-    <StackApp.Navigator initialRouteName="SignIn">
+    <StackApp.Navigator screenOptions={{ headerShown: false }}>
       <StackApp.Screen
         name="Drawer"
         component={DrawerNavigator}
         options={navOptionHandler}
       />
+      <StackApp.Screen name="SignIn" component={SignIn} />
+      <StackApp.Screen name="SignUp" component={SignUp} />
     </StackApp.Navigator>
   );
 }
 
 export default function App() {
   return (
-    <SocketProvider>
-    <ThemeProvider theme={theme.dark}>
-    <NavigationContainer>
-      <StackNavigator />
-    </NavigationContainer>
-    </ThemeProvider>
-    </SocketProvider>
+    <Provider store={store}>
+      <SocketProvider>
+        <ThemeProvider theme={theme.dark}>
+          <NavigationContainer>
+            <MainStack />
+          </NavigationContainer>
+        </ThemeProvider>
+      </SocketProvider>
+    </Provider>
   );
 }

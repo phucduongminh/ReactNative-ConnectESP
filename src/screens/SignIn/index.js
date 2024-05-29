@@ -7,17 +7,22 @@ import {
   StatusBar,
   ScrollView,
   Alert,
+  BackHandler,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import {Container, Action, ButtonSign, Header, H1} from './styles';
 import * as Animatable from 'react-native-animatable';
+import {CommonActions} from '@react-navigation/native';
 import styleGlobal from '../../styles/global';
 import db from '../../../db.json';
 import axios from 'axios';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../redux/slices/user';
 
 export default () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [data, setData] = React.useState({
     email: '',
@@ -31,14 +36,28 @@ export default () => {
 
   const handleSignClick = async () => {
     axios
-      .post('http://192.168.x.x:3001/api/users/login', {
+      .post('http://192.168.1.11:3001/api/users/login', {
         email: data.email,
         password: data.password,
       })
       .then(response => {
         if (response.data.success) {
           Alert.alert('Success', 'Login Successfull');
-          navigation.navigate('Home');
+          dispatch(setUser({user: true}));
+          navigation.dispatch(
+            CommonActions.reset({index: 0, routes: [{name: 'Drawer'}]}),
+          );
+
+          // Add this to prevent the hardware back button from navigating back
+          const backAction = () => {
+            return true; // This will prevent the event from bubbling up and the default back button action from being executed
+          };
+          const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+          );
+
+          return () => backHandler.remove();
         } else {
           Alert.alert('Error', response.data.message);
         }

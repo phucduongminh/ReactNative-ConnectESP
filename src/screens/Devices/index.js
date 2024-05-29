@@ -1,11 +1,11 @@
-import React from 'react'
-import t from 'prop-types'
+import React from 'react';
+import t from 'prop-types';
 
-import List from './List'
+import List from './List';
 
-import { Container } from './styled'
+import {Container} from './styled';
 
-export default ({ navigation }) => {
+export default ({navigation}) => {
   function handleNavigate(name) {
     if (name === 'Television') {
       navigation.navigate('Brands');
@@ -20,11 +20,11 @@ export default ({ navigation }) => {
     <Container>
       <List handleNavigate={handleNavigate} />
     </Container>
-  )
-}
+  );
+};
 
 propTypes = {
   navigation: t.shape({
-    navigate: t.func
-  }).isRequired
-}
+    navigate: t.func,
+  }).isRequired,
+};

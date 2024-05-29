@@ -1,27 +1,34 @@
-import React from 'react'
-import 'react-native-get-random-values'
-import { v4 } from 'uuid'
+import React, { useState } from 'react';
+import 'react-native-get-random-values';
+import {v4} from 'uuid';
 
-import { Button, Grouped, Rounded } from './Buttons'
+import {Button, Grouped, Rounded} from './Buttons';
 
-import { Container, Row } from './styled'
+import {Container, Row} from './styled';
 
 const data = [
   {
     id: v4(),
     buttons: [
-      { id: v4(), type: 'button', icon: 'power', action: () => {console.log('Power button clicked!');}},
-      { id: v4(), type: 'button', icon: 'tv', action: () => {} },
-      { id: v4(), type: 'button', icon: 'menu', action: () => {} }
-    ]
+      {
+        id: v4(),
+        type: 'button',
+        icon: 'power',
+        action: () => {
+          console.log('Power button clicked!');
+        },
+      },
+      {id: v4(), type: 'button', icon: 'tv', action: () => {}},
+      {id: v4(), type: 'button', icon: 'menu', action: () => {}},
+    ],
   },
   {
     id: v4(),
     buttons: [
-      { id: v4(), type: 'button', icon: 'home', action: () => {} },
-      { id: v4(), type: 'button', icon: 'info', action: () => {} },
-      { id: v4(), type: 'button', icon: 'corner-down-left', action: () => {} }
-    ]
+      {id: v4(), type: 'button', icon: 'home', action: () => {}},
+      {id: v4(), type: 'button', icon: 'info', action: () => {}},
+      {id: v4(), type: 'button', icon: 'corner-down-left', action: () => {}},
+    ],
   },
   {
     id: v4(),
@@ -32,27 +39,27 @@ const data = [
         buttons: {
           up: {
             action: () => {},
-            icon: 'chevron-up'
+            icon: 'chevron-up',
           },
           right: {
             action: () => {},
-            icon: 'chevron-right'
+            icon: 'chevron-right',
           },
           down: {
             action: () => {},
-            icon: 'chevron-down'
+            icon: 'chevron-down',
           },
           left: {
             action: () => {},
-            icon: 'chevron-left'
+            icon: 'chevron-left',
           },
           center: {
             action: () => {},
-            label: 'ok'
-          }
-        }
-      }
-    ]
+            label: 'ok',
+          },
+        },
+      },
+    ],
   },
   {
     id: v4(),
@@ -64,13 +71,13 @@ const data = [
         buttons: {
           up: {
             action: () => {},
-            icon: 'chevron-up'
+            icon: 'chevron-up',
           },
           down: {
             action: () => {},
-            icon: 'chevron-down'
-          }
-        }
+            icon: 'chevron-down',
+          },
+        },
       },
       {
         id: v4(),
@@ -79,29 +86,31 @@ const data = [
         buttons: {
           up: {
             action: () => {},
-            icon: 'plus'
+            icon: 'plus',
           },
           down: {
             action: () => {},
-            icon: 'minus'
-          }
-        }
-      }
-    ]
+            icon: 'minus',
+          },
+        },
+      },
+    ],
   },
   {
     id: v4(),
     buttons: [
-      { id: v4(), type: 'button', icon: 'more-horizontal', action: () => {} },
-      { id: v4(), type: 'button', icon: 'volume-x', action: () => {} }
-    ]
-  }
-]
+      {id: v4(), type: 'button', icon: 'more-horizontal', action: () => {}},
+      {id: v4(), type: 'button', icon: 'volume-x', action: () => {}},
+      //{id: v4(), type: 'button', icon: 'volume-2', action: () => {}},
+    ],
+  },
+];
 
 export default () => {
+  //const [mute, setMute] = useState(false);
   return (
     <Container>
-      {data.map(({ id, buttons }) => (
+      {data.map(({id, buttons}) => (
         <Row key={id}>
           {buttons.map(button => {
             if (button.type === 'button') {
@@ -109,18 +118,15 @@ export default () => {
                 <Button
                   key={button.id}
                   icon={button.icon}
-                  onPress={() => { button.action() }}
+                  onPress={() => {
+                    button.action();
+                  }}
                 />
-              )
+              );
             }
 
             if (button.type === 'rounded') {
-              return (
-                <Rounded
-                  key={button.id}
-                  buttons={button.buttons}
-                />
-              )
+              return <Rounded key={button.id} buttons={button.buttons} />;
             }
 
             if (button.type === 'grouped') {
@@ -130,11 +136,11 @@ export default () => {
                   label={button.label}
                   buttons={button.buttons}
                 />
-              )
+              );
             }
           })}
         </Row>
       ))}
     </Container>
-  )
-}
+  );
+};
