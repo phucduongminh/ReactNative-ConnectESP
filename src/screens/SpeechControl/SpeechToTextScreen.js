@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Image} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AudioRecord from 'react-native-audio-record';
 import RNFS from 'react-native-fs';
 import axios from 'axios';
 import {PermissionsAndroid} from 'react-native';
+import {API_URL} from '../../config';
 
 const SpeechToTextScreen = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -58,7 +59,7 @@ const SpeechToTextScreen = () => {
 
     try {
       const response = await axios.post(
-        'http://ipconfig:3001/api/speech/transcribe',
+        `${API_URL}/api/speech/transcribe`,
         {audio: audioData},
         {headers: {'Content-Type': 'application/json'}},
       );
@@ -83,7 +84,7 @@ const SpeechToTextScreen = () => {
         style={{
           padding: 30,
           borderRadius: 100,
-          backgroundColor: isRecording ? '#4285F4':'transparent',
+          backgroundColor: isRecording ? '#4285F4' : 'transparent',
           borderColor: isRecording ? 'transparent' : 'black',
           borderWidth: 8,
         }}>

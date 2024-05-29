@@ -20,6 +20,7 @@ import db from '../../../db.json';
 import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {setUser} from '../../redux/slices/user';
+import {API_URL} from '../../../constants';
 
 export default () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ export default () => {
 
   const handleSignClick = async () => {
     axios
-      .post('http://192.168.1.11:3001/api/users/login', {
+      .post(`${API_URL}/api/users/login`, {
         email: data.email,
         password: data.password,
       })
