@@ -74,6 +74,7 @@
 		D1B3B97B59A54755A45F84A6 /* SVN-Gilroy Xlight Italic.woff in Resources */ = {isa = PBXBuildFile; fileRef = C7B1AAE3A1AB497ABE636813 /* SVN-Gilroy Xlight Italic.woff */; };
 		737550229E5444FC9EDE635E /* SVN-Gilroy Xlight.eot in Resources */ = {isa = PBXBuildFile; fileRef = A6954346335E4CEBA16E5F9F /* SVN-Gilroy Xlight.eot */; };
 		A56BBBF08F21419A821257E7 /* SVN-Gilroy Xlight.woff in Resources */ = {isa = PBXBuildFile; fileRef = BB2FA069A10F4507839AFE67 /* SVN-Gilroy Xlight.woff */; };
+		0E4E5FA6B6414BB78DD70D57 /* microphone-icon.webp in Resources */ = {isa = PBXBuildFile; fileRef = 03D777FF97084BFFBFD56072 /* microphone-icon.webp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -164,6 +165,7 @@
 		C7B1AAE3A1AB497ABE636813 /* SVN-Gilroy Xlight Italic.woff */ = {isa = PBXFileReference; name = "SVN-Gilroy Xlight Italic.woff"; path = "../assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight Italic.woff"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		A6954346335E4CEBA16E5F9F /* SVN-Gilroy Xlight.eot */ = {isa = PBXFileReference; name = "SVN-Gilroy Xlight.eot"; path = "../assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight.eot"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		BB2FA069A10F4507839AFE67 /* SVN-Gilroy Xlight.woff */ = {isa = PBXFileReference; name = "SVN-Gilroy Xlight.woff"; path = "../assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight.woff"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		03D777FF97084BFFBFD56072 /* microphone-icon.webp */ = {isa = PBXFileReference; name = "microphone-icon.webp"; path = "../assets/images/microphone-icon.webp"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -332,6 +334,7 @@
 				C7B1AAE3A1AB497ABE636813 /* SVN-Gilroy Xlight Italic.woff */,
 				A6954346335E4CEBA16E5F9F /* SVN-Gilroy Xlight.eot */,
 				BB2FA069A10F4507839AFE67 /* SVN-Gilroy Xlight.woff */,
+				03D777FF97084BFFBFD56072 /* microphone-icon.webp */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -493,6 +496,7 @@
 				D1B3B97B59A54755A45F84A6 /* SVN-Gilroy Xlight Italic.woff in Resources */,
 				737550229E5444FC9EDE635E /* SVN-Gilroy Xlight.eot in Resources */,
 				A56BBBF08F21419A821257E7 /* SVN-Gilroy Xlight.woff in Resources */,
+				0E4E5FA6B6414BB78DD70D57 /* microphone-icon.webp in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

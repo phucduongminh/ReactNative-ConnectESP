@@ -130,7 +130,7 @@ export default () => {
   return (
     <Container>
       <StatusBar
-        backgroundColor={db.theme.colors.statuBar}
+        backgroundColor={db.theme.colors.primary}
         barStyle="light-content"
       />
       <Header>

@@ -51,6 +51,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="ConnectBluetooth" component={ConnectBluetooth} />
       <Drawer.Screen name="APMode" component={APMode} />
       <Drawer.Screen name="LearnSignal" component={LearnSignal} />
+      <Drawer.Screen name="SpeechToTextScreen" component={SpeechToTextScreen} />
     </Drawer.Navigator>
   );
 }
@@ -73,17 +74,14 @@ function MainStack({navigation}) {
 
 export default function App() {
   return (
-    // <Provider store={store}>
-    //   <SocketProvider>
-    //     <ThemeProvider theme={theme.dark}>
-    //       <NavigationContainer>
-    //         <MainStack />
-    //       </NavigationContainer>
-    //     </ThemeProvider>
-    //   </SocketProvider>
-    // </Provider>
-    <>
-      <SpeechToTextScreen />
-    </>
+    <Provider store={store}>
+      <SocketProvider>
+        <ThemeProvider theme={theme.dark}>
+          <NavigationContainer>
+            <MainStack />
+          </NavigationContainer>
+        </ThemeProvider>
+      </SocketProvider>
+    </Provider>
   );
 }

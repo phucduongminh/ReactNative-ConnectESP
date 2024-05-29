@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { v4 } from 'uuid';
+import {v4} from 'uuid';
 
-import { Button, Grouped, Rounded } from './Buttons';
-import { Container, Row, Column } from './styled';
+import {Button, Grouped, Rounded} from './Buttons';
+import {Container, Row, Column} from './styled';
 
-import { useSocketContext } from '../../../SocketContext'; // Assuming you have this context
+import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 
 export default () => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
-  const { isSocketConnected, hostIP } = useSocketContext(); // Use the socket context here
+  const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
 
   const handleTemperatureUp = () => {
     setCurrentDegree(prevDegree => prevDegree + 1);
@@ -27,7 +27,9 @@ export default () => {
     const port = 12345;
 
     if (!isSocketConnected) {
-      alert('Socket is not connected. Please start the search to connect to the server.');
+      alert(
+        'Socket is not connected. Please start the search to connect to the server.',
+      );
       return;
     }
 
@@ -35,13 +37,20 @@ export default () => {
 
     socket.bind(port);
     socket.once('listening', function () {
-      socket.send(signalToSend, undefined, undefined, port, hostIP, function (err) {
-        if (err) throw err;
-        console.log(`Sent ${signalToSend} signal to server:`, hostIP);
-        socket.close();
-        // Toggle the message stage after sending the signal
-        setMessageStageOn(prevStatus => !prevStatus);
-      });
+      socket.send(
+        signalToSend,
+        undefined,
+        undefined,
+        port,
+        hostIP,
+        function (err) {
+          if (err) throw err;
+          console.log(`Sent ${signalToSend} signal to server:`, hostIP);
+          socket.close();
+          // Toggle the message stage after sending the signal
+          setMessageStageOn(prevStatus => !prevStatus);
+        },
+      );
     });
   };
 
@@ -50,14 +59,14 @@ export default () => {
       id: v4(),
       buttons: [
         {
-              id: v4(),
-              type: 'rounded',
-              buttons: {
-                center: {
-                  action: () => {},
-                  icon: 'chevron-up'
-                }
-              }
+          id: v4(),
+          type: 'rounded',
+          buttons: {
+            center: {
+              action: () => {},
+              icon: 'chevron-up',
+            },
+          },
         },
         {
           id: v4(),
@@ -65,24 +74,24 @@ export default () => {
           buttons: {
             center: {
               action: () => {},
-              icon: 'chevron-down'
-            }
-          }
-    },
+              icon: 'chevron-down',
+            },
+          },
+        },
       ],
     },
     {
       id: v4(),
       buttons: [
         {
-              id: v4(),
-              type: 'rounded',
-              buttons: {
-                center: {
-                  action: sendPowerSignal,
-                  icon: 'power'
-                }
-              }
+          id: v4(),
+          type: 'rounded',
+          buttons: {
+            center: {
+              action: sendPowerSignal,
+              icon: 'power',
+            },
+          },
         },
       ],
     },
@@ -96,23 +105,23 @@ export default () => {
           buttons: {
             up: {
               action: () => {},
-              icon: 'plus'
+              icon: 'plus',
             },
             down: {
               action: () => {},
-              icon: 'minus'
-            }
-          }
+              icon: 'minus',
+            },
+          },
         },
         {
           id: v4(),
-              type: 'rounded',
-              buttons: {
-                center: {
-                  action: () => {},
-                  icon: 'wind'
-                }
-              }
+          type: 'rounded',
+          buttons: {
+            center: {
+              action: () => {},
+              icon: 'wind',
+            },
+          },
         },
         {
           id: v4(),
@@ -121,14 +130,14 @@ export default () => {
           buttons: {
             up: {
               action: () => {},
-              icon: 'cloud-snow'
+              icon: 'cloud-snow',
             },
             down: {
               action: () => {},
-              icon: 'sun'
-            }
-          }
-        }
+              icon: 'sun',
+            },
+          },
+        },
       ],
     },
   ];
@@ -141,7 +150,7 @@ export default () => {
           <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
         </View>
       </Column>
-      {data.map(({ id, buttons }) => (
+      {data.map(({id, buttons}) => (
         <Row key={id}>
           {buttons.map(button => {
             if (button.type === 'button') {

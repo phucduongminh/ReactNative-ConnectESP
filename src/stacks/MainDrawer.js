@@ -1,5 +1,4 @@
 import React from 'react';
-import {View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   Container,
@@ -58,6 +57,14 @@ const MainDrawer = props => {
           <Opcoes>
             <MaterialIcons name="login" size={28} style={{color: 'white'}} />
             <TextItem>APMode</TextItem>
+          </Opcoes>
+        </StyledTouchableOpacity>
+
+        <StyledTouchableOpacity
+          onPress={() => props.navigation.navigate('SpeechToTextScreen')}>
+          <Opcoes>
+            <MaterialIcons name="mic" size={28} style={{color: 'white'}} />
+            <TextItem>Voice Control</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
 
