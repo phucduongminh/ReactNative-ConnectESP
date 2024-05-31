@@ -6,6 +6,7 @@ import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import {useSocketContext} from '../../../SocketContext';
 import dgram from 'react-native-udp';
+import {port} from '../../../constants';
 
 export default ({navigation}) => {
   const {isSocketConnected, hostIP} = useSocketContext();
@@ -13,7 +14,6 @@ export default ({navigation}) => {
 
   function sendHomeSignal() {
     // Implement the logic to send "HOME" signal to the server
-    const port = 12345;
 
     if (!isSocketConnected) {
       // Socket is not connected, show an alert or a message
