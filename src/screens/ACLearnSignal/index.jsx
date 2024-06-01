@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import {v4} from 'uuid';
 
 import {Button, Grouped, Rounded} from './Buttons';
 import {Container, Row, Column} from './styled';
@@ -23,7 +22,7 @@ export default () => {
     setCurrentDegree(prevDegree => prevDegree - 1);
   };
 
-  const sendPowerSignal = () => {
+  const learnPowerSignal = () => {
     const socket = dgram.createSocket('udp4');
 
     if (!isSocketConnected) {
@@ -33,24 +32,19 @@ export default () => {
       return;
     }
 
-    const signalToSend = {
-      command: messageStageOn ? 'OFFAC' : 'ONAC',
-      // Add other data you want to send here
-    };
-
-    const jsonString = JSON.stringify(signalToSend);
+    const signalToSend = messageStageOn ? 'OFFAC' : 'ONAC';
 
     socket.bind(port);
     socket.once('listening', function () {
       socket.send(
-        jsonString,
+        signalToSend,
         undefined,
         undefined,
         port,
         hostIP,
         function (err) {
           if (err) throw err;
-          console.log(`Sent JSON object to server:`, hostIP);
+          console.log(`Sent ${signalToSend} signal to server:`, hostIP);
           socket.close();
           setMessageStageOn(prevStatus => !prevStatus);
         },
@@ -60,89 +54,74 @@ export default () => {
 
   const data = [
     {
-      id: v4(),
-      buttons: [
-        {
-          id: v4(),
-          type: 'rounded',
-          buttons: {
-            center: {
-              action: () => {},
-              icon: 'chevron-up',
-            },
-          },
+      id: '1',
+      type: 'rounded',
+      buttons: {
+        center: {
+          action: () => {},
+          icon: 'chevron-up',
         },
-        {
-          id: v4(),
-          type: 'rounded',
-          buttons: {
-            center: {
-              action: () => {},
-              icon: 'chevron-down',
-            },
-          },
-        },
-      ],
+      },
     },
     {
-      id: v4(),
-      buttons: [
-        {
-          id: v4(),
-          type: 'rounded',
-          buttons: {
-            center: {
-              action: sendPowerSignal,
-              icon: 'power',
-            },
-          },
+      id: '2',
+      type: 'rounded',
+      buttons: {
+        center: {
+          action: () => {},
+          icon: 'chevron-down',
         },
-      ],
+      },
     },
     {
-      id: v4(),
-      buttons: [
-        {
-          id: v4(),
-          type: 'grouped',
-          label: 'fan',
-          buttons: {
-            up: {
-              action: () => {},
-              icon: 'plus',
-            },
-            down: {
-              action: () => {},
-              icon: 'minus',
-            },
-          },
+      id: 'ac-power',
+      type: 'rounded',
+      buttons: {
+        center: {
+          action: learnPowerSignal,
+          icon: 'power',
         },
-        {
-          id: v4(),
-          type: 'rounded',
-          buttons: {
-            center: {
-              action: () => {},
-              icon: 'wind',
-            },
-          },
+      },
+    },
+    {
+      id: 'ac-fan',
+      type: 'grouped',
+      label: 'fan',
+      buttons: {
+        up: {
+          action: () => {},
+          icon: 'plus',
         },
-        {
-          id: v4(),
-          type: 'grouped',
-          label: 'mode',
-          buttons: {
-            up: {
-              action: () => {},
-              icon: 'cloud-snow',
-            },
-            down: {
-              action: () => {},
-              icon: 'sun',
-            },
-          },
+        down: {
+          action: () => {},
+          icon: 'minus',
         },
-      ],
+      },
+    },
+    {
+      id: 'ac-wing',
+      type: 'rounded',
+      buttons: {
+        center: {
+          action: () => {},
+          icon: 'wind',
+        },
+      },
+    },
+    {
+      id: 'ac-mode',
+      type: 'grouped',
+      label: 'mode',
+      buttons: {
+        up: {
+          action: () => {},
+          icon: 'cloud-snow',
+        },
+        down: {
+          action: () => {},
+          icon: 'sun',
+        },
+      },
     },
   ];
 
