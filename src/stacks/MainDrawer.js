@@ -29,7 +29,7 @@ const MainDrawer = props => {
         </StyledTouchableOpacity>
 
         <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('NewDevice')}>
+          onPress={() => props.navigation.navigate('NewHardware')}>
           <Opcoes>
             <MaterialIcons
               name="settings-remote"
@@ -61,7 +61,7 @@ const MainDrawer = props => {
         </StyledTouchableOpacity>
 
         <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('SpeechToTextScreen')}>
+          onPress={() => props.navigation.navigate('SpeechControl')}>
           <Opcoes>
             <MaterialIcons name="mic" size={28} style={{color: 'white'}} />
             <TextItem>Voice Control</TextItem>

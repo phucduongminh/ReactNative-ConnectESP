@@ -14,8 +14,7 @@ import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import {useSocketContext} from '../../../SocketContext';
 import dgram from 'react-native-udp';
-import {port} from '../../constants';
-
+import {port} from '../../../constants';
 
 export default () => {
   const notFoundText = 'Search result';

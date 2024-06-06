@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, PermissionsAndroid} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AudioRecord from 'react-native-audio-record';
 import RNFS from 'react-native-fs';
 import axios from 'axios';
-import {PermissionsAndroid} from 'react-native';
-import {API_URL} from '../../config';
+import {API_URL} from '../../../constants';
+import {Container} from './styles';
 
-const SpeechToTextScreen = () => {
+export default () => {
   const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
 
@@ -63,7 +63,7 @@ const SpeechToTextScreen = () => {
         {audio: audioData},
         {headers: {'Content-Type': 'application/json'}},
       );
-      setText(response.data);
+      setText(response.data.text);
     } catch (error) {
       console.error('Error making network request', error);
     }
@@ -78,25 +78,25 @@ const SpeechToTextScreen = () => {
   };
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <TouchableOpacity
-        onPress={handleMicPress}
-        style={{
-          padding: 30,
-          borderRadius: 100,
-          backgroundColor: isRecording ? '#4285F4' : 'transparent',
-          borderColor: isRecording ? 'transparent' : 'black',
-          borderWidth: 8,
-        }}>
-        <Feather
-          name="mic"
-          size={100}
-          color={isRecording ? 'white' : 'black'}
-        />
-      </TouchableOpacity>
-      <Text>{text}</Text>
-    </View>
+    <Container>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <TouchableOpacity
+          onPress={handleMicPress}
+          style={{
+            padding: 30,
+            borderRadius: 100,
+            backgroundColor: isRecording ? '#4285F4' : 'transparent',
+            borderColor: isRecording ? 'transparent' : 'black',
+            borderWidth: 8,
+          }}>
+          <Feather
+            name="mic"
+            size={100}
+            color={isRecording ? 'white' : 'black'}
+          />
+        </TouchableOpacity>
+        <Text style={{fontSize: 20, marginTop: 20}}>{text}</Text>
+      </View>
+    </Container>
   );
 };
-
-export default SpeechToTextScreen;
