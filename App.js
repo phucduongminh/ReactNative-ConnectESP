@@ -30,6 +30,8 @@ import {useSelector} from 'react-redux';
 import UserDevices from './src/screens/UserDevices';
 import DeviceTypes from './src/screens/DeviceTypes';
 import ACLearnSignal from './src/screens/ACLearnSignal';
+import UserACBrands from './src/screens/UserACBrands';
+import UserACControl from './src/screens/UserACControl';
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -56,6 +58,8 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="LearnSignal" component={LearnSignal} />
       <Drawer.Screen name="ACLearnSignal" component={ACLearnSignal} />
       <Drawer.Screen name="UserDevices" component={UserDevices} />
+      <Drawer.Screen name="UserACBrands" component={UserACBrands} />
+      <Drawer.Screen name="UserACControl" component={UserACControl} />
       <Drawer.Screen name="DeviceTypes" component={DeviceTypes} />
       <Drawer.Screen name="SpeechControl" component={SpeechControl} />
     </Drawer.Navigator>

@@ -14,6 +14,7 @@ export default ({navigation, route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const {device_id} = route.params;
+  console.log(device_id);
   const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
 
   const handleTemperatureUp = () => {
@@ -40,7 +41,7 @@ export default ({navigation, route}) => {
     }
 
     const signalToSend = {
-      command: 'LEARN',
+      command: 'SEND-LEARN',
       device_id: device_id,
       button_id: id,
     };
@@ -69,14 +70,10 @@ export default ({navigation, route}) => {
           data: msg.toString(),
         };
         console.log('data.data', buffer.data);
-        if (buffer.data !== 'LEARN-FAIL') {
+        if (buffer.data !== 'NETWORK-ERR') {
           console.log('data.data', buffer.data);
-          alert('Learn signal successfully! ');
           setMessageStageOn(prevStatus => !prevStatus);
           socket.close();
-        }
-        if (buffer.data === 'LEARN-FAIL') {
-          alert('Check Hardware or Remote Control and try again!');
         }
         if (buffer.data === 'NETWORK-ERR') {
           alert('Server is not available!');

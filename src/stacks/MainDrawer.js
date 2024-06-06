@@ -21,7 +21,7 @@ const MainDrawer = props => {
         </StyledTouchableOpacity>
 
         <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('Devices')}>
+          onPress={() => props.navigation.navigate('UserDevices')}>
           <Opcoes>
             <MaterialIcons name="devices" size={28} style={{color: 'white'}} />
             <TextItem>Devices</TextItem>
@@ -72,7 +72,7 @@ const MainDrawer = props => {
           onPress={() => props.navigation.navigate('Preload')}>
           <Opcoes>
             <MaterialIcons name="refresh" size={28} style={{color: 'white'}} />
-            <TextItem>Reload</TextItem>
+            <TextItem>Sign Out</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
       </ViewItem>
