@@ -48,24 +48,41 @@ export default ({navigation, route}) => {
     const jsonString = JSON.stringify(signalToSend);
     console.log('Sending JSON object to server:', jsonString);
 
-    // socket.bind(port);
-    // socket.once('listening', function () {
-    //   socket.send(
-    //     jsonString,
-    //     undefined,
-    //     undefined,
-    //     port,
-    //     hostIP,
-    //     function (err) {
-    //       if (err) {
-    //         throw err;
-    //       }
-    //       console.log('Sent JSON object to server:', hostIP);
-    //       socket.close();
-    //       setMessageStageOn(prevStatus => !prevStatus);
-    //     },
-    //   );
-    // });
+    socket.bind(port);
+    socket.once('listening', function () {
+      socket.send(
+        jsonString,
+        undefined,
+        undefined,
+        port,
+        hostIP,
+        function (err) {
+          if (err) {
+            throw err;
+          }
+          console.log('Sent JSON object to server:', hostIP);
+          //socket.close();
+        },
+      );
+      socket.on('message', function (msg, rinfo) {
+        var buffer = {
+          data: msg.toString(),
+        };
+        console.log('data.data', buffer.data);
+        if (buffer.data !== 'LEARN-FAIL') {
+          console.log('data.data', buffer.data);
+          alert('Learn signal successfully! ');
+          setMessageStageOn(prevStatus => !prevStatus);
+          socket.close();
+        }
+        if (buffer.data === 'LEARN-FAIL') {
+          alert('Check Hardware or Remote Control and try again!');
+        }
+        if (buffer.data === 'NETWORK-ERR') {
+          alert('Server is not available!');
+        }
+      });
+    });
   };
 
   const data = [
@@ -161,7 +178,9 @@ export default ({navigation, route}) => {
       <Column>
         <View style={styles.screen}>
           <Icon name="thermometer" size={60} color="#000" />
-          <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
+          {messageStageOn && (
+            <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
+          )}
         </View>
       </Column>
       {data.map(({id, buttons}) => (

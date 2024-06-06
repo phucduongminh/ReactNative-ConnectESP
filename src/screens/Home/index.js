@@ -18,7 +18,7 @@ export default ({navigation}) => {
     if (!isSocketConnected) {
       // Socket is not connected, show an alert or a message
       alert(
-        'Socket is not connected. Please start the search to connect to the server.',
+        'Socket is not connected. Please start the search to connect to the hardware.',
       );
       return;
     }
@@ -60,6 +60,17 @@ export default ({navigation}) => {
     });
   }
 
+  function learnSignal() {
+    if (!isSocketConnected) {
+      alert(
+        'Socket is not connected. Please start the search to connect to the hardware.',
+      );
+      navigation.navigate('NewHardware');
+    } else {
+      navigation.navigate('DeviceTypes');
+    }
+  }
+
   return (
     <Container>
       <StatusBar
@@ -85,7 +96,7 @@ export default ({navigation}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styleGlobal.signIn, styleGlobal.signInColor]}
-            onPress={() => navigation.navigate('DeviceTypes')}>
+            onPress={() => learnSignal()}>
             <Text style={styleGlobal.textBtnSignUp}>Learn Signal</Text>
           </TouchableOpacity>
         </ScrollView>

@@ -26,6 +26,10 @@ export default () => {
     useSocketContext();
   //const [hostIP, setHostIP] = useState('');
 
+  //const [jsonString, setJsonString] = useState('');
+
+  //const [foundEspList, setFoundEspList] = useState([]
+
   const socket = dgram.createSocket('udp4');
 
   /*useEffect(() => {
@@ -35,11 +39,14 @@ export default () => {
   }, [foundEspList]);*/
 
   function tryToConnect(options) {
+    const jsonString = JSON.stringify({
+      command: 'ESP-ACK',
+    });
     socket.bind(options.port);
     socket.once('listening', function () {
       setIsSocketConnected(true);
       socket.send(
-        'ESP-ACK',
+        jsonString,
         undefined,
         undefined,
         options.port,
@@ -81,7 +88,7 @@ export default () => {
     setFoundEspList([{key: notFoundText}]);
     const options = {
       port: port,
-      host: '192.168.1.255',
+      host: '192.168.1.57',
       localAddress: '0.0.0.0',
       reuseAddress: true,
     };
@@ -103,11 +110,21 @@ export default () => {
   }
 
   function cancelSearch() {
+    const jsonString = JSON.stringify({
+      command: 'CANCEL',
+    });
     socket.bind(port);
     socket.once('listening', function () {
-      socket.send('CANCEL', undefined, undefined, port, hostIP, function (err) {
-        if (err) throw err;
-      });
+      socket.send(
+        jsonString,
+        undefined,
+        undefined,
+        port,
+        hostIP,
+        function (err) {
+          if (err) throw err;
+        },
+      );
       socket.on('message', function (msg, rinfo) {});
       socket.removeAllListeners();
       setIsSocketConnected(false);
@@ -123,15 +140,15 @@ export default () => {
         barStyle="light-content"
       />
       <Header>
-        <H1>NEW DEVICE</H1>
+        <H1>NEW HARDWARE</H1>
       </Header>
       <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
         <View
           style={styleGlobal.scrollViewSignIn}
           keyboardShouldPersistTaps={'handled'}>
-          <PrimaryText>Find your ESP8266!</PrimaryText>
+          <PrimaryText>Find your ESP32!</PrimaryText>
           <SecondaryText>
-            Click the button below to search the ESP8266 over the network!
+            Click the button below to search the ESP32 over the network!
           </SecondaryText>
           <ButtonView>
             {!loading && (
