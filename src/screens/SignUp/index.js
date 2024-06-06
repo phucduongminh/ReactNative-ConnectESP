@@ -17,6 +17,7 @@ import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import db from '../../../db.json';
+import {API_URL} from '../../../constants';
 
 export default () => {
   const navigation = useNavigation();
@@ -39,7 +40,7 @@ export default () => {
   const handleSignClick = async () => {
     //console.log(process.env.API_URL);
     axios
-      .post('http://192.168.1.11:3001/api/users/register', {
+      .post(`${API_URL}/api/users/register`, {
         name: data.name,
         email: data.email,
         password: data.password,

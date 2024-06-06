@@ -18,19 +18,15 @@ import base64 from 'react-native-base64';
 import CheckBox from '@react-native-community/checkbox';
 
 import {BleManager, Device} from 'react-native-ble-plx';
-import { useBluetoothStatus } from 'react-native-bluetooth-status';
+import {useBluetoothStatus} from 'react-native-bluetooth-status';
 import {styles, Container, Header, H1, PrimaryText} from './styles';
 import db from '../../../db.json';
+import {SERVICE_UUID, BOX_UUID, MESSAGE_UUID} from '../../../constants';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const BLTManager = new BleManager();
-
-const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
-
-const MESSAGE_UUID = '6d68efe5-04b6-4a85-abc4-c2670b7bf7fd';
-const BOX_UUID = 'f27b53ad-c63d-49a0-8c0f-9f297e6cc520';
 
 function StringToBool(input) {
   return input == '1';
@@ -53,17 +49,17 @@ export default ({navigation}) => {
 
   const [message, setMessage] = useState('Nothing Yet');
   const [boxValue, setBoxValue] = useState(false);
-const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
+  const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
 
   // Scans availbale BLT Devices and then call connectDevice
   async function scanDevices() {
     try {
-// kiểm tra trạng thái bluetooth
+      // kiểm tra trạng thái bluetooth
       if (!btStatus) {
         // yêu cầu người dùng bật bluetooth
-        await setBluetooth(true)
+        await setBluetooth(true);
       }
-  
+
       // yêu cầu quyền truy cập bluetooth
       const result = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -77,13 +73,13 @@ const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
         // nếu người dùng cấp quyền
         console.log('scanning');
         // hiển thị Activityindicator
-  
+
         // bắt đầu quét thiết bị
         BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
           if (error) {
             //throw error; // ném lỗi nếu có
           }
-  
+
           if (scannedDevice && scannedDevice.name == 'BLEExample') {
             // dừng quét nếu tìm thấy thiết bị mong muốn
             BLTManager.stopDeviceScan();
@@ -91,15 +87,15 @@ const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
             connectDevice(scannedDevice);
           }
         });
-  
+
         // dừng quét thiết bị sau 5 giây
         setTimeout(() => {
           BLTManager.stopDeviceScan();
-          console.log("Stop scan.")
+          console.log('Stop scan.');
         }, 5000);
       } else {
         // nếu người dùng không cấp quyền
-        Alert.alert("Permission Bluetooth","Requirement for Bluetooth")
+        Alert.alert('Permission Bluetooth', 'Requirement for Bluetooth');
       }
     } catch (error) {
       // xử lý lỗi nếu có
@@ -170,8 +166,7 @@ const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
         //BoxValue
         device
           .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
-          .then(valenc => {
-          });
+          .then(valenc => {});
 
         //monitor values and tell what to do when receiving an update
 
@@ -220,55 +215,57 @@ const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
         <H1>Connect BlueTooth</H1>
       </Header>
       <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
-      <ScrollView
-        style={styleGlobal.scrollViewSignIn}>
-        <PrimaryText>{message}</PrimaryText>
-        <View style={{paddingBottom: 20}}></View>
-            {!isConnected ? (
+        <ScrollView style={styleGlobal.scrollViewSignIn}>
+          <PrimaryText>{message}</PrimaryText>
+          <View style={{paddingBottom: 20}}></View>
+          {!isConnected ? (
             <TouchableOpacity
-            disabled={false}
-            style={[styleGlobal.signIn,{width:"50%",left:"25%",right:"25%"}]}
-            onPress={() => {
-              scanDevices();
-            }}>
-            <LinearGradient
-              colors={
-                [db.theme.colors.primary, db.theme.colors.primary]
-              }
-              style={styleGlobal.signIn}>
-              <Text style={styleGlobal.textBtnSignIn}>Connect</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+              disabled={false}
+              style={[
+                styleGlobal.signIn,
+                {width: '50%', left: '25%', right: '25%'},
+              ]}
+              onPress={() => {
+                scanDevices();
+              }}>
+              <LinearGradient
+                colors={[db.theme.colors.primary, db.theme.colors.primary]}
+                style={styleGlobal.signIn}>
+                <Text style={styleGlobal.textBtnSignIn}>Connect</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity
               disabled={false}
-              style={[styleGlobal.signIn,{width:"50%",left:"25%",right:"25%"},styleGlobal.signInColor]}
+              style={[
+                styleGlobal.signIn,
+                {width: '50%', left: '25%', right: '25%'},
+                styleGlobal.signInColor,
+              ]}
               onPress={() => {
                 disconnectDevice();
               }}>
               <LinearGradient
-                colors={
-                  [db.theme.colors.primary, db.theme.colors.primary]
-                }
+                colors={[db.theme.colors.primary, db.theme.colors.primary]}
                 style={styleGlobal.signIn}>
                 <Text style={styleGlobal.textBtnSignIn}>Disconnect</Text>
               </LinearGradient>
             </TouchableOpacity>
           )}
           {/* Checkbox */}
-      <View style={styles.rowView}>
-        <CheckBox
-          disabled={false}
-          value={boxValue}
-          onValueChange={newValue => {
-            setBoxValue(newValue)
-            sendBoxValue(BoolToString(newValue));
-          }}
-        />
-        <Text style={{marginTop:5}}>Check to send message!</Text>
-      </View>
-      </ScrollView>
-    </Animatable.View>
-  </Container>
+          <View style={styles.rowView}>
+            <CheckBox
+              disabled={false}
+              value={boxValue}
+              onValueChange={newValue => {
+                setBoxValue(newValue);
+                sendBoxValue(BoolToString(newValue));
+              }}
+            />
+            <Text style={{marginTop: 5}}>Check to send message!</Text>
+          </View>
+        </ScrollView>
+      </Animatable.View>
+    </Container>
   );
-}
+};

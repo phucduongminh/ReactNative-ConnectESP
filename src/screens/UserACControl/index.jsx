@@ -10,9 +10,11 @@ import {useSocketContext} from '../../../SocketContext'; // Assuming you have th
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
 
-export default () => {
+export default ({navigation, route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
+  const {device_id} = route.params;
+  console.log(device_id);
   const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
 
   const handleTemperatureUp = () => {
@@ -23,7 +25,8 @@ export default () => {
     setCurrentDegree(prevDegree => prevDegree - 1);
   };
 
-  const sendPowerSignal = () => {
+  const learnPowerSignal = id => () => {
+    console.log(device_id);
     const socket = dgram.createSocket('udp4');
 
     if (!isSocketConnected) {
@@ -33,12 +36,18 @@ export default () => {
       return;
     }
 
+    if (id === 'power') {
+      id = messageStageOn ? 'power-off' : 'power';
+    }
+
     const signalToSend = {
-      command: messageStageOn ? 'OFFAC' : 'ONAC',
-      // Add other data you want to send here
+      command: 'SEND-LEARN',
+      device_id: device_id,
+      button_id: id,
     };
 
     const jsonString = JSON.stringify(signalToSend);
+    console.log('Sending JSON object to server:', jsonString);
 
     socket.bind(port);
     socket.once('listening', function () {
@@ -49,12 +58,27 @@ export default () => {
         port,
         hostIP,
         function (err) {
-          if (err) throw err;
-          console.log(`Sent JSON object to server:`, hostIP);
-          socket.close();
-          setMessageStageOn(prevStatus => !prevStatus);
+          if (err) {
+            throw err;
+          }
+          console.log('Sent JSON object to server:', hostIP);
+          //socket.close();
         },
       );
+      socket.on('message', function (msg, rinfo) {
+        var buffer = {
+          data: msg.toString(),
+        };
+        console.log('data.data', buffer.data);
+        if (buffer.data !== 'NETWORK-ERR') {
+          console.log('data.data', buffer.data);
+          setMessageStageOn(prevStatus => !prevStatus);
+          socket.close();
+        }
+        if (buffer.data === 'NETWORK-ERR') {
+          alert('Server is not available!');
+        }
+      });
     });
   };
 
@@ -92,7 +116,7 @@ export default () => {
           type: 'rounded',
           buttons: {
             center: {
-              action: sendPowerSignal,
+              action: learnPowerSignal('power'),
               icon: 'power',
             },
           },
@@ -150,8 +174,12 @@ export default () => {
     <Container>
       <Column>
         <View style={styles.screen}>
-          <Icon name="thermometer" size={60} color="#000" />
-          <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
+          {messageStageOn && (
+            <>
+              <Icon name="thermometer" size={60} color="#000" />
+              <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
+            </>
+          )}
         </View>
       </Column>
       {data.map(({id, buttons}) => (
@@ -205,7 +233,7 @@ export default () => {
 const styles = StyleSheet.create({
   screen: {
     backgroundColor: '#FFF',
-    padding: 20,
+    height: 100,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',

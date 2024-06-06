@@ -19,9 +19,9 @@ import db from '../../../db.json';
 import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import dgram from 'react-native-udp'
+import { port } from '../../../constants';
 
 export default () => {
-  const port = 12345;
   const notFoundText = 'Search result';
 
   const [loading, setLoading] = useState(false);

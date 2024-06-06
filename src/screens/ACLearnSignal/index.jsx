@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { v4 } from 'uuid';
+import {v4} from 'uuid';
 
-import { Button, Grouped, Rounded } from './Buttons';
+import {Button, Grouped, Rounded} from './Buttons';
+import {Container, Row, Column} from './styled';
 
-import { Container, Row, Column } from './styled';
-
-import { useSocketContext } from '../../../SocketContext'; // Assuming you have this context
+import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
+import {port} from '../../../constants';
 
-export default () => {
+export default ({navigation, route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
+  const {device_id} = route.params;
+  const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
 
   const handleTemperatureUp = () => {
     setCurrentDegree(prevDegree => prevDegree + 1);
@@ -22,34 +24,65 @@ export default () => {
     setCurrentDegree(prevDegree => prevDegree - 1);
   };
 
-  const toggleMessageStage = () => {
-    setMessageStageOn(prevStatus => !prevStatus);
-  };
-
-  const sendPowerSignal = () => {
-    toggleMessageStage();
-    const { isSocketConnected, hostIP } = useSocketContext();
+  const learnPowerSignal = id => () => {
+    console.log(device_id);
     const socket = dgram.createSocket('udp4');
-    const port = 12345;
 
     if (!isSocketConnected) {
-      alert('Socket is not connected. Please start the search to connect to the server.');
+      alert(
+        'Socket is not connected. Please start the search to connect to the server.',
+      );
       return;
     }
 
-    const signalToSend = messageStageOn ? 'OFF' : 'ON';
+    if (id === 'power') {
+      id = messageStageOn ? 'power-off' : 'power';
+    }
+
+    const signalToSend = {
+      command: 'LEARN',
+      device_id: device_id,
+      button_id: id,
+    };
+
+    const jsonString = JSON.stringify(signalToSend);
+    console.log('Sending JSON object to server:', jsonString);
 
     socket.bind(port);
     socket.once('listening', function () {
-      socket.send(signalToSend, undefined, undefined, port, hostIP, function (err) {
-        if (err) throw err;
-        console.log(`Sent ${signalToSend} signal to server:`, hostIP);
-        socket.close();
+      socket.send(
+        jsonString,
+        undefined,
+        undefined,
+        port,
+        hostIP,
+        function (err) {
+          if (err) {
+            throw err;
+          }
+          console.log('Sent JSON object to server:', hostIP);
+          //socket.close();
+        },
+      );
+      socket.on('message', function (msg, rinfo) {
+        var buffer = {
+          data: msg.toString(),
+        };
+        console.log('data.data', buffer.data);
+        if (buffer.data !== 'LEARN-FAIL') {
+          console.log('data.data', buffer.data);
+          alert('Learn signal successfully! ');
+          setMessageStageOn(prevStatus => !prevStatus);
+          socket.close();
+        }
+        if (buffer.data === 'LEARN-FAIL') {
+          alert('Check Hardware or Remote Control and try again!');
+        }
+        if (buffer.data === 'NETWORK-ERR') {
+          alert('Server is not available!');
+        }
       });
     });
-
-    // Toggle the message stage after sending the signal
-    toggleMessageStage();
   };
 
   const data = [
@@ -57,14 +90,14 @@ export default () => {
       id: v4(),
       buttons: [
         {
-              id: v4(),
-              type: 'rounded',
-              buttons: {
-                center: {
-                  action: () => {},
-                  icon: 'chevron-up'
-                }
-              }
+          id: v4(),
+          type: 'rounded',
+          buttons: {
+            center: {
+              action: () => {},
+              icon: 'chevron-up',
+            },
+          },
         },
         {
           id: v4(),
@@ -72,24 +105,24 @@ export default () => {
           buttons: {
             center: {
               action: () => {},
-              icon: 'chevron-down'
-            }
-          }
-    },
+              icon: 'chevron-down',
+            },
+          },
+        },
       ],
     },
     {
       id: v4(),
       buttons: [
         {
-              id: v4(),
-              type: 'rounded',
-              buttons: {
-                center: {
-                  action: {sendPowerSignal},
-                  icon: 'power'
-                }
-              }
+          id: v4(),
+          type: 'rounded',
+          buttons: {
+            center: {
+              action: learnPowerSignal('power'),
+              icon: 'power',
+            },
+          },
         },
       ],
     },
@@ -103,23 +136,23 @@ export default () => {
           buttons: {
             up: {
               action: () => {},
-              icon: 'plus'
+              icon: 'plus',
             },
             down: {
               action: () => {},
-              icon: 'minus'
-            }
-          }
+              icon: 'minus',
+            },
+          },
         },
         {
           id: v4(),
-              type: 'rounded',
-              buttons: {
-                center: {
-                  action: () => {},
-                  icon: 'wind'
-                }
-              }
+          type: 'rounded',
+          buttons: {
+            center: {
+              action: () => {},
+              icon: 'wind',
+            },
+          },
         },
         {
           id: v4(),
@@ -128,14 +161,14 @@ export default () => {
           buttons: {
             up: {
               action: () => {},
-              icon: 'cloud-snow'
+              icon: 'cloud-snow',
             },
             down: {
               action: () => {},
-              icon: 'sun'
-            }
-          }
-        }
+              icon: 'sun',
+            },
+          },
+        },
       ],
     },
   ];
@@ -144,11 +177,15 @@ export default () => {
     <Container>
       <Column>
         <View style={styles.screen}>
-          <Icon name="thermometer" size={60} color="#000" />
-          <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
+          {messageStageOn && (
+            <>
+              <Icon name="thermometer" size={60} color="#000" />
+              <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
+            </>
+          )}
         </View>
       </Column>
-      {data.map(({ id, buttons }) => (
+      {data.map(({id, buttons}) => (
         <Row key={id}>
           {buttons.map(button => {
             if (button.type === 'button') {
@@ -199,7 +236,7 @@ export default () => {
 const styles = StyleSheet.create({
   screen: {
     backgroundColor: '#FFF',
-    padding: 20,
+    height: 100,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',

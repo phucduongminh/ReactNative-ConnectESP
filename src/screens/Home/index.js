@@ -6,6 +6,7 @@ import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import {useSocketContext} from '../../../SocketContext';
 import dgram from 'react-native-udp';
+import {port} from '../../../constants';
 
 export default ({navigation}) => {
   const {isSocketConnected, hostIP} = useSocketContext();
@@ -13,12 +14,11 @@ export default ({navigation}) => {
 
   function sendHomeSignal() {
     // Implement the logic to send "HOME" signal to the server
-    const port = 12345;
 
     if (!isSocketConnected) {
       // Socket is not connected, show an alert or a message
       alert(
-        'Socket is not connected. Please start the search to connect to the server.',
+        'Socket is not connected. Please start the search to connect to the hardware.',
       );
       return;
     }
@@ -60,6 +60,17 @@ export default ({navigation}) => {
     });
   }
 
+  function learnSignal() {
+    if (!isSocketConnected) {
+      alert(
+        'Socket is not connected. Please start the search to connect to the hardware.',
+      );
+      navigation.navigate('NewHardware');
+    } else {
+      navigation.navigate('DeviceTypes');
+    }
+  }
+
   return (
     <Container>
       <StatusBar
@@ -85,7 +96,7 @@ export default ({navigation}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styleGlobal.signIn, styleGlobal.signInColor]}
-            onPress={navigation.navigate('LearnSignal')}>
+            onPress={() => learnSignal()}>
             <Text style={styleGlobal.textBtnSignUp}>Learn Signal</Text>
           </TouchableOpacity>
         </ScrollView>

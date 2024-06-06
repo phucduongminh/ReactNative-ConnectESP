@@ -1,5 +1,4 @@
 import React from 'react';
-import {View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   Container,
@@ -22,7 +21,7 @@ const MainDrawer = props => {
         </StyledTouchableOpacity>
 
         <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('Devices')}>
+          onPress={() => props.navigation.navigate('UserDevices')}>
           <Opcoes>
             <MaterialIcons name="devices" size={28} style={{color: 'white'}} />
             <TextItem>Devices</TextItem>
@@ -30,7 +29,7 @@ const MainDrawer = props => {
         </StyledTouchableOpacity>
 
         <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('NewDevice')}>
+          onPress={() => props.navigation.navigate('NewHardware')}>
           <Opcoes>
             <MaterialIcons
               name="settings-remote"
@@ -62,10 +61,18 @@ const MainDrawer = props => {
         </StyledTouchableOpacity>
 
         <StyledTouchableOpacity
+          onPress={() => props.navigation.navigate('SpeechControl')}>
+          <Opcoes>
+            <MaterialIcons name="mic" size={28} style={{color: 'white'}} />
+            <TextItem>Voice Control</TextItem>
+          </Opcoes>
+        </StyledTouchableOpacity>
+
+        <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Preload')}>
           <Opcoes>
             <MaterialIcons name="refresh" size={28} style={{color: 'white'}} />
-            <TextItem>Reload</TextItem>
+            <TextItem>Sign Out</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
       </ViewItem>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   ButtonView,
   SecondaryText,
@@ -8,28 +8,27 @@ import {
   PrimaryText,
   LoadingIcon,
 } from './styles';
-import {
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  View,
-  FlatList
-} from 'react-native';
+import {Text, StatusBar, TouchableOpacity, View, FlatList} from 'react-native';
 import db from '../../../db.json';
 import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
-import { useSocketContext } from '../../../SocketContext';
-import dgram from 'react-native-udp'
+import {useSocketContext} from '../../../SocketContext';
+import dgram from 'react-native-udp';
+import {port} from '../../../constants';
 
 export default () => {
-  const port = 12345;
   const notFoundText = 'Search result';
 
   const [loading, setLoading] = useState(false);
-  const [foundEspList, setFoundEspList] = useState([{ key: notFoundText }]);
+  const [foundEspList, setFoundEspList] = useState([{key: notFoundText}]);
   //const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const { isSocketConnected, setIsSocketConnected, hostIP, setHostIP } = useSocketContext();
+  const {isSocketConnected, setIsSocketConnected, hostIP, setHostIP} =
+    useSocketContext();
   //const [hostIP, setHostIP] = useState('');
+
+  //const [jsonString, setJsonString] = useState('');
+
+  //const [foundEspList, setFoundEspList] = useState([]
 
   const socket = dgram.createSocket('udp4');
 
@@ -40,27 +39,41 @@ export default () => {
   }, [foundEspList]);*/
 
   function tryToConnect(options) {
-    socket.bind(options.port)
+    const jsonString = JSON.stringify({
+      command: 'ESP-ACK',
+    });
+    socket.bind(options.port);
     socket.once('listening', function () {
       setIsSocketConnected(true);
-      socket.send('ESP-ACK', undefined, undefined, options.port, options.host, function (err) {
-        if (err) throw err
-        console.log('Message sent!')
-      })
-    })
+      socket.send(
+        jsonString,
+        undefined,
+        undefined,
+        options.port,
+        options.host,
+        function (err) {
+          if (err) throw err;
+          console.log('Message sent!');
+        },
+      );
+    });
     socket.on('message', function (msg, rinfo) {
       var buffer = {
         data: msg.toString(),
       };
-      if (buffer.data.includes("192.168")) {
-        if (buffer.data !== 'ESP-ACK' && buffer.data !== 'CANCEL' && buffer.data !== 'WAIT') {
+      if (buffer.data.includes('192.168')) {
+        if (
+          buffer.data !== 'ESP-ACK' &&
+          buffer.data !== 'CANCEL' &&
+          buffer.data !== 'WAIT'
+        ) {
           console.log('data.data', buffer.data);
           setHostIP(buffer.data);
           // Check if the list already contains an item with the new value
-          if (!foundEspList.some((item) => item.key === buffer.data)) {
-            setFoundEspList((prevList) => [
+          if (!foundEspList.some(item => item.key === buffer.data)) {
+            setFoundEspList(prevList => [
               ...prevList,
-              { key: "ESP # IP:: " + buffer.data },
+              {key: 'ESP # IP:: ' + buffer.data},
             ]);
           }
         }
@@ -72,10 +85,10 @@ export default () => {
 
   function beginSearch() {
     setLoading(true);
-    setFoundEspList([{ key: notFoundText }]);
+    setFoundEspList([{key: notFoundText}]);
     const options = {
       port: port,
-      host: '192.168.1.255',
+      host: '192.168.1.57',
       localAddress: '0.0.0.0',
       reuseAddress: true,
     };
@@ -90,24 +103,34 @@ export default () => {
         setIsSocketConnected(false);
         if (foundEspList.length === 1 && foundEspList[0].key === notFoundText) {
           // No devices found within 2 minutes
-          setFoundEspList([{ key: 'No devices found!' }]);
+          setFoundEspList([{key: 'No devices found!'}]);
         }
       }, 120000); // 2 minutes in milliseconds
     }
   }
 
   function cancelSearch() {
-    socket.bind(port)
+    const jsonString = JSON.stringify({
+      command: 'CANCEL',
+    });
+    socket.bind(port);
     socket.once('listening', function () {
-      socket.send('CANCEL', undefined, undefined, port, hostIP, function (err) {
-        if (err) throw err
-      })
-      socket.on('message', function (msg, rinfo) { })
+      socket.send(
+        jsonString,
+        undefined,
+        undefined,
+        port,
+        hostIP,
+        function (err) {
+          if (err) throw err;
+        },
+      );
+      socket.on('message', function (msg, rinfo) {});
       socket.removeAllListeners();
       setIsSocketConnected(false);
       setLoading(false);
       socket.close();
-    })
+    });
   }
 
   return (
@@ -117,15 +140,15 @@ export default () => {
         barStyle="light-content"
       />
       <Header>
-        <H1>NEW DEVICE</H1>
+        <H1>NEW HARDWARE</H1>
       </Header>
       <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
         <View
           style={styleGlobal.scrollViewSignIn}
           keyboardShouldPersistTaps={'handled'}>
-          <PrimaryText>Find your ESP8266!</PrimaryText>
+          <PrimaryText>Find your ESP32!</PrimaryText>
           <SecondaryText>
-            Click the button below to search the ESP8266 over the network!
+            Click the button below to search the ESP32 over the network!
           </SecondaryText>
           <ButtonView>
             {!loading && (
@@ -149,11 +172,9 @@ export default () => {
           <View>
             <FlatList
               data={foundEspList}
-              renderItem={({ item }) => (
-                <View style={{ backgroundColor: 'white' }}>
-                  <Text style={{ color: 'black', padding: 10 }}>
-                    {item.key}
-                  </Text>
+              renderItem={({item}) => (
+                <View style={{backgroundColor: 'white'}}>
+                  <Text style={{color: 'black', padding: 10}}>{item.key}</Text>
                 </View>
               )}
               keyExtractor={(item, index) => index.toString()}

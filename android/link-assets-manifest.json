@@ -240,6 +240,10 @@
     {
       "path": "assets/fonts/SVN-Gilroy/SVN-Gilroy Xlight.woff",
       "sha1": "b1a5cd87a39624bca4621139b55c8fbf5281433a"
+    },
+    {
+      "path": "assets/images/microphone-icon.webp",
+      "sha1": "f3c558e8980fb67e4c49b1af93c18ae585482c36"
     }
   ]
 }

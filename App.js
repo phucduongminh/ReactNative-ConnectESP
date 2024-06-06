@@ -14,7 +14,7 @@ import SignUp from './src/screens/SignUp';
 import Historic from './src/screens/Historic';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
-import NewDevice from './src/screens/NewDevice';
+import NewHardware from './src/screens/NewHardware';
 import Brands from './src/screens/Brands';
 import ACBrands from './src/screens/ACBrands';
 import Devices from './src/screens/Devices';
@@ -23,9 +23,15 @@ import ACControl from './src/screens/ACControl';
 import ConnectBluetooth from './src/screens/ConnectBluetooth';
 import APMode from './src/screens/APMode';
 import LearnSignal from './src/screens/LearnSignal';
+import SpeechControl from './src/screens/SpeechControl';
 import {SocketProvider} from './SocketContext';
 import theme from './theme';
 import {useSelector} from 'react-redux';
+import UserDevices from './src/screens/UserDevices';
+import DeviceTypes from './src/screens/DeviceTypes';
+import ACLearnSignal from './src/screens/ACLearnSignal';
+import UserACBrands from './src/screens/UserACBrands';
+import UserACControl from './src/screens/UserACControl';
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -41,7 +47,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="Historic" component={Historic} />
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
-      <Drawer.Screen name="NewDevice" component={NewDevice} />
+      <Drawer.Screen name="NewHardware" component={NewHardware} />
       <Drawer.Screen name="Brands" component={Brands} />
       <Drawer.Screen name="ACBrands" component={ACBrands} />
       <Drawer.Screen name="Devices" component={Devices} />
@@ -50,22 +56,32 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="ConnectBluetooth" component={ConnectBluetooth} />
       <Drawer.Screen name="APMode" component={APMode} />
       <Drawer.Screen name="LearnSignal" component={LearnSignal} />
+      <Drawer.Screen name="ACLearnSignal" component={ACLearnSignal} />
+      <Drawer.Screen name="UserDevices" component={UserDevices} />
+      <Drawer.Screen name="UserACBrands" component={UserACBrands} />
+      <Drawer.Screen name="UserACControl" component={UserACControl} />
+      <Drawer.Screen name="DeviceTypes" component={DeviceTypes} />
+      <Drawer.Screen name="SpeechControl" component={SpeechControl} />
     </Drawer.Navigator>
   );
 }
 
 const StackApp = createStackNavigator();
 function MainStack({navigation}) {
-  const { user } = useSelector(state => state.user);
+  const {user} = useSelector(state => state.user.user);
   return (
-    <StackApp.Navigator screenOptions={{ headerShown: false }}>
-      <StackApp.Screen
-        name="Drawer"
-        component={DrawerNavigator}
-        options={navOptionHandler}
-      />
+    <StackApp.Navigator screenOptions={{headerShown: false}}>
+      {user && (
+        <StackApp.Screen
+          name="Drawer"
+          component={DrawerNavigator}
+          options={navOptionHandler}
+        />
+      )}
       <StackApp.Screen name="SignIn" component={SignIn} />
       <StackApp.Screen name="SignUp" component={SignUp} />
+      {/* {!user && <StackApp.Screen name="SignIn" component={SignIn} />}
+      {!user && <StackApp.Screen name="SignUp" component={SignUp} />} */}
     </StackApp.Navigator>
   );
 }
