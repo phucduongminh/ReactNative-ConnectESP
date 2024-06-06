@@ -19,7 +19,7 @@ import styleGlobal from '../../styles/global';
 import db from '../../../db.json';
 import axios from 'axios';
 import {useDispatch} from 'react-redux';
-import {setUser} from '../../redux/slices/user';
+import {setUser, setUserId} from '../../redux/slices/user';
 import {API_URL} from '../../../constants';
 
 export default () => {
@@ -36,36 +36,42 @@ export default () => {
   });
 
   const handleSignClick = async () => {
-    axios
-      .post(`${API_URL}/api/users/login`, {
+    try {
+      const response = await axios.post(`${API_URL}/api/users/login`, {
         email: data.email,
         password: data.password,
-      })
-      .then(response => {
-        if (response.data.success) {
-          Alert.alert('Success', 'Login Successfull');
-          dispatch(setUser({user: true}));
-          navigation.dispatch(
-            CommonActions.reset({index: 0, routes: [{name: 'Drawer'}]}),
-          );
-
-          // Add this to prevent the hardware back button from navigating back
-          const backAction = () => {
-            return true; // This will prevent the event from bubbling up and the default back button action from being executed
-          };
-          const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction,
-          );
-
-          return () => backHandler.remove();
-        } else {
-          Alert.alert('Error', response.data.message);
-        }
-      })
-      .catch(error => {
-        console.error(error);
       });
+
+      if (response.data.success) {
+        Alert.alert('Success', 'Login Successfull');
+        dispatch(setUser({user: true}));
+        dispatch(setUserId({userId: response.data.user.id}));
+        navigation.dispatch(
+          CommonActions.reset({index: 0, routes: [{name: 'Drawer'}]}),
+        );
+
+        // Add this to prevent the hardware back button from navigating back
+        const backAction = () => true; // This will prevent the event from bubbling up and the default back button action from being executed
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction,
+        );
+
+        return () => backHandler.remove();
+      } else {
+        Alert.alert('Error', response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        Alert.alert('Error', 'Something went wrong. Please try again.');
+      }
+    }
   };
 
   const handleMessageButtonClick = () => {

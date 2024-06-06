@@ -4,6 +4,7 @@ const initialState = {
   isLoading: false,
   error: null,
   user: false,
+  userId: null,
   sessionId: null,
 };
 
@@ -18,6 +19,9 @@ const slice = createSlice({
     setUser(state, action) {
       state.user = action.payload;
     },
+    setUserId(state, action) {
+      state.userId = action.payload;
+    },
     setSessionId(state, action) {
       state.sessionId = action.payload.sessionId;
     },
@@ -30,4 +34,5 @@ const slice = createSlice({
 // Reducer
 export default slice.reducer;
 // Actions
-export const {setUser, setSessionId, removeSessionId} = slice.actions;
+export const {setUser, setUserId, setSessionId, removeSessionId} =
+  slice.actions;
