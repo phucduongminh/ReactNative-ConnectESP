@@ -67,6 +67,7 @@ const data = [
     id: 1,
     gradient: ['#1e3c72', '#2a5298'],
   },
+  {id: 2, gradient: ['#ff6f61', '#ff9966']}, // Softened orange/red gradient
   {
     id: 3,
     gradient: ['#eb3349', '#f45c43'],
@@ -79,4 +80,9 @@ const data = [
     id: 5,
     gradient: ['#29323c', '#485563'],
   },
+  {id: 6, gradient: ['#000428', '#004e92']}, // Deep blue - More saturated
+  {id: 7, gradient: ['#f0c27b', '#4b1248']}, // Rich purple to gold
+  {id: 8, gradient: ['#2C3E50', '#FD746C']}, // Blue to orange
+  {id: 9, gradient: ['#e55d87', '#5fc3e4']}, // Pink to blue
+  {id: 10, gradient: ['#1f4037', '#99f2c8']}, // Teal gradient
 ];

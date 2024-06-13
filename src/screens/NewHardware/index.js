@@ -14,7 +14,7 @@ import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import {useSocketContext} from '../../../SocketContext';
 import dgram from 'react-native-udp';
-import {port} from '../../../constants';
+import {port, HOST} from '../../../constants';
 
 export default () => {
   const notFoundText = 'Search result';
@@ -88,7 +88,7 @@ export default () => {
     setFoundEspList([{key: notFoundText}]);
     const options = {
       port: port,
-      host: '192.168.1.57',
+      host: HOST,
       localAddress: '0.0.0.0',
       reuseAddress: true,
     };

@@ -34,7 +34,8 @@ export default () => {
     }
 
     const signalToSend = {
-      command: messageStageOn ? 'OFFAC' : 'ONAC',
+      command: messageStageOn ? 'OFF-AC' : 'ON-AC',
+      mode: '0',
       // Add other data you want to send here
     };
 
@@ -51,8 +52,8 @@ export default () => {
         function (err) {
           if (err) throw err;
           console.log(`Sent JSON object to server:`, hostIP);
-          socket.close();
           setMessageStageOn(prevStatus => !prevStatus);
+          socket.close();
         },
       );
     });
@@ -150,8 +151,12 @@ export default () => {
     <Container>
       <Column>
         <View style={styles.screen}>
-          <Icon name="thermometer" size={60} color="#000" />
-          <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
+          {messageStageOn && (
+            <>
+              <Icon name="thermometer" size={60} color="#000" />
+              <Text style={styles.currentDegreeText}>{currentDegree}°C</Text>
+            </>
+          )}
         </View>
       </Column>
       {data.map(({id, buttons}) => (
@@ -205,7 +210,7 @@ export default () => {
 const styles = StyleSheet.create({
   screen: {
     backgroundColor: '#FFF',
-    padding: 20,
+    height: 100,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',

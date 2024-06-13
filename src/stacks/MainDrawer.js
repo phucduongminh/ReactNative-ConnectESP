@@ -24,7 +24,7 @@ const MainDrawer = props => {
           onPress={() => props.navigation.navigate('UserDevices')}>
           <Opcoes>
             <MaterialIcons name="devices" size={28} style={{color: 'white'}} />
-            <TextItem>Devices</TextItem>
+            <TextItem>My Home Devices</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
 
@@ -36,7 +36,7 @@ const MainDrawer = props => {
               size={28}
               style={{color: 'white'}}
             />
-            <TextItem>New Controller</TextItem>
+            <TextItem>New Hardware</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
 

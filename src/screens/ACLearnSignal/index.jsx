@@ -69,7 +69,7 @@ export default ({navigation, route}) => {
           data: msg.toString(),
         };
         console.log('data.data', buffer.data);
-        if (buffer.data !== 'LEARN-FAIL') {
+        if (buffer.data !== 'LEARN-FAIL' && buffer.data !== 'PRO') {
           console.log('data.data', buffer.data);
           alert('Learn signal successfully! ');
           setMessageStageOn(prevStatus => !prevStatus);

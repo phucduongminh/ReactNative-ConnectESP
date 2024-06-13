@@ -1,15 +1,28 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, PermissionsAndroid} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  PermissionsAndroid,
+  Alert,
+} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AudioRecord from 'react-native-audio-record';
-import RNFS from 'react-native-fs';
+import RNFS, {stat} from 'react-native-fs';
 import axios from 'axios';
 import {API_URL} from '../../../constants';
 import {Container} from './styles';
+import {useSelector} from 'react-redux';
+import {port} from '../../../constants';
+
+import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
+import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 
 export default () => {
   const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
+  const {isSocketConnected, hostIP} = useSocketContext();
+  const {userId} = useSelector(state => state.user.userId);
 
   const requestRecordAudioPermission = async () => {
     try {
@@ -64,6 +77,55 @@ export default () => {
         {headers: {'Content-Type': 'application/json'}},
       );
       setText(response.data.text);
+      const res = await axios.post(
+        `${API_URL}/api/voice/process`,
+        {text: response.data.text},
+        {headers: {'Content-Type': 'application/json'}},
+      );
+      if (res.data.success) {
+        const signalToSend = {
+          command: res.data.data.command,
+          user_id: userId,
+          mode: '1',
+        };
+
+        const jsonString = JSON.stringify(signalToSend);
+        console.log('Sending JSON object to server:', jsonString);
+        const socket = dgram.createSocket('udp4');
+
+        socket.bind(port);
+        socket.once('listening', function () {
+          socket.send(
+            jsonString,
+            undefined,
+            undefined,
+            port,
+            hostIP,
+            function (err) {
+              if (err) {
+                throw err;
+              }
+              console.log('Sent JSON object to server:', hostIP);
+              //socket.close();
+            },
+          );
+          socket.on('message', function (msg, rinfo) {
+            var buffer = {
+              data: msg.toString(),
+            };
+            console.log('data.data', buffer.data);
+            if (buffer.data !== 'NETWORK-ERR') {
+              console.log('data.data', buffer.data);
+              socket.close();
+            }
+            if (buffer.data === 'NETWORK-ERR') {
+              alert('Server is not available!');
+            }
+          });
+        });
+      } else {
+        Alert.alert('Try again!');
+      }
     } catch (error) {
       console.error('Error making network request', error);
     }
