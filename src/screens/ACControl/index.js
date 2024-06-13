@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {v4} from 'uuid';
 
@@ -10,10 +17,14 @@ import {useSocketContext} from '../../../SocketContext'; // Assuming you have th
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
 
-export default () => {
+import SpeechControl from '../SpeechControl'; // Import the SpeechControl component
+
+export default ({route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
+  const [isVoiceScreenVisible, setIsVoiceScreenVisible] = useState(false); // State to manage the visibility of SpeechControl
   const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
+  const {Protocol} = route.params || null;
 
   const handleTemperatureUp = () => {
     setCurrentDegree(prevDegree => prevDegree + 1);
@@ -36,7 +47,7 @@ export default () => {
     const signalToSend = {
       command: messageStageOn ? 'OFF-AC' : 'ON-AC',
       mode: '0',
-      // Add other data you want to send here
+      Protocol: Protocol,
     };
 
     const jsonString = JSON.stringify(signalToSend);
@@ -105,6 +116,25 @@ export default () => {
       buttons: [
         {
           id: v4(),
+          type: 'button',
+          icon: 'mic',
+          action: () => {
+            setIsVoiceScreenVisible(true); // Show the SpeechControl when the mic button is pressed
+          },
+        },
+        {
+          id: v4(),
+          type: 'button',
+          icon: 'wind',
+          action: () => {},
+        },
+      ],
+    },
+    {
+      id: v4(),
+      buttons: [
+        {
+          id: v4(),
           type: 'grouped',
           label: 'fan',
           buttons: {
@@ -124,7 +154,7 @@ export default () => {
           buttons: {
             center: {
               action: () => {},
-              icon: 'wind',
+              icon: 'clock',
             },
           },
         },
@@ -203,6 +233,19 @@ export default () => {
           })}
         </Row>
       ))}
+      <Modal
+        visible={isVoiceScreenVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsVoiceScreenVisible(false)}>
+        <TouchableWithoutFeedback
+          onPress={() => setIsVoiceScreenVisible(false)}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
+        <View style={styles.modalContainer}>
+          <SpeechControl mode={0} />
+        </View>
+      </Modal>
     </Container>
   );
 };
@@ -221,5 +264,20 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontFamily: 'Arial',
     fontWeight: 'bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#f1f3f4',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    height: '40%',
   },
 });

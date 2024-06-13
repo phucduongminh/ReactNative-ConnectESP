@@ -31,7 +31,11 @@ const MainDrawer = props => {
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('UserDevices')}>
           <Opcoes>
-            <MaterialIcons name="devices" size={28} style={{color: 'white'}} />
+            <MaterialIcons
+              name="broadcast-on-personal"
+              size={28}
+              style={{color: 'white'}}
+            />
             <TextItem>My Home Devices</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>

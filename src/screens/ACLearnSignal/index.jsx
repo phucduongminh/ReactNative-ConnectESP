@@ -131,6 +131,23 @@ export default ({navigation, route}) => {
       buttons: [
         {
           id: v4(),
+          type: 'button',
+          icon: 'mic-off',
+          action: () => {},
+        },
+        {
+          id: v4(),
+          type: 'button',
+          icon: 'wind',
+          action: () => {},
+        },
+      ],
+    },
+    {
+      id: v4(),
+      buttons: [
+        {
+          id: v4(),
           type: 'grouped',
           label: 'fan',
           buttons: {
@@ -150,7 +167,7 @@ export default ({navigation, route}) => {
           buttons: {
             center: {
               action: () => {},
-              icon: 'wind',
+              icon: 'clock',
             },
           },
         },

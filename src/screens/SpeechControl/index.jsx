@@ -18,7 +18,7 @@ import {port} from '../../../constants';
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 
-export default () => {
+const SpeechControl = ({mode}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
   const {isSocketConnected, hostIP} = useSocketContext();
@@ -82,11 +82,13 @@ export default () => {
         {text: response.data.text},
         {headers: {'Content-Type': 'application/json'}},
       );
+      //console.log('Response from server:', res.data);
       if (res.data.success) {
         const signalToSend = {
           command: res.data.data.command,
           user_id: userId,
-          mode: '1',
+          ordinal: res.data.data.ordinal || 1,
+          mode: mode.toString(),
         };
 
         const jsonString = JSON.stringify(signalToSend);
@@ -127,6 +129,7 @@ export default () => {
         Alert.alert('Try again!');
       }
     } catch (error) {
+      Alert.alert('Try again!');
       console.error('Error making network request', error);
     }
   };
@@ -147,18 +150,22 @@ export default () => {
           style={{
             padding: 30,
             borderRadius: 100,
-            backgroundColor: isRecording ? '#4285F4' : 'transparent',
+            backgroundColor: isRecording ? '#4083ef' : 'transparent',
             borderColor: isRecording ? 'transparent' : 'black',
             borderWidth: 8,
           }}>
           <Feather
             name="mic"
-            size={100}
+            size={80}
             color={isRecording ? 'white' : 'black'}
           />
         </TouchableOpacity>
-        <Text style={{fontSize: 20, marginTop: 20}}>{text}</Text>
+        <Text style={{fontSize: 24, marginTop: 20, color: '#4285F4'}}>
+          {text}
+        </Text>
       </View>
     </Container>
   );
 };
+
+export default SpeechControl;

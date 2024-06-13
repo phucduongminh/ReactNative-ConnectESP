@@ -1,10 +1,18 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {v4} from 'uuid';
 
 import {Button, Grouped, Rounded} from './Buttons';
 import {Container, Row, Column} from './styled';
+import SpeechControl from '../SpeechControl'; // Import the SpeechControl component
 
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
@@ -14,8 +22,9 @@ export default ({navigation, route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const {device_id} = route.params;
-  console.log(device_id);
+  //console.log(device_id);
   const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
+  const [isVoiceScreenVisible, setIsVoiceScreenVisible] = useState(false); // State to manage the visibility of SpeechControl
 
   const handleTemperatureUp = () => {
     setCurrentDegree(prevDegree => prevDegree + 1);
@@ -128,6 +137,25 @@ export default ({navigation, route}) => {
       buttons: [
         {
           id: v4(),
+          type: 'button',
+          icon: 'mic',
+          action: () => {
+            setIsVoiceScreenVisible(true); // Show the SpeechControl when the mic button is pressed
+          },
+        },
+        {
+          id: v4(),
+          type: 'button',
+          icon: 'wind',
+          action: () => {},
+        },
+      ],
+    },
+    {
+      id: v4(),
+      buttons: [
+        {
+          id: v4(),
           type: 'grouped',
           label: 'fan',
           buttons: {
@@ -147,7 +175,7 @@ export default ({navigation, route}) => {
           buttons: {
             center: {
               action: () => {},
-              icon: 'wind',
+              icon: 'clock',
             },
           },
         },
@@ -226,6 +254,19 @@ export default ({navigation, route}) => {
           })}
         </Row>
       ))}
+      <Modal
+        visible={isVoiceScreenVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsVoiceScreenVisible(false)}>
+        <TouchableWithoutFeedback
+          onPress={() => setIsVoiceScreenVisible(false)}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
+        <View style={styles.modalContainer}>
+          <SpeechControl mode={1} />
+        </View>
+      </Modal>
     </Container>
   );
 };
@@ -244,5 +285,20 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontFamily: 'Arial',
     fontWeight: 'bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#f1f3f4',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    height: '40%',
   },
 });

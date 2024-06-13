@@ -51,7 +51,7 @@ export default ({navigation}) => {
         console.log('data.data', buffer.data);
         if (buffer.data !== 'UNKNOWN' && buffer.data !== 'WAIT') {
           alert('Remote Identified! Device: ' + buffer.data);
-          navigation.navigate('ACControl');
+          navigation.navigate('ACControl', {Protocol: buffer.data});
           socket.close();
         }
         if (buffer.data === 'UNKNOWN') {
