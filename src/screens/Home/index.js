@@ -92,7 +92,7 @@ export default ({navigation}) => {
             <Text style={styleGlobal.textBtnSignUp}>Add New Remote</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('ACLearnSignal')}
+            onPress={() => navigation.navigate('Devices')}
             style={[styleGlobal.signIn, styleGlobal.signInColor]}>
             <Text style={styleGlobal.textBtnSignUp}>Choose Device</Text>
           </TouchableOpacity>

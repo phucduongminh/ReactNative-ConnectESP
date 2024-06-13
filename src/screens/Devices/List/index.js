@@ -44,7 +44,7 @@ export default function List({handleNavigate}) {
           <Ripple
             onPress={() => handleNavigate(name)} // Pass the name as a parameter
             width={width}
-            height={200}
+            height={width}
             radius={16}
             marginBottom={20}>
             <Gradient gradient={gradient}>

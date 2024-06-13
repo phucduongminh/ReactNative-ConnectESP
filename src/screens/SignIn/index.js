@@ -141,7 +141,7 @@ export default () => {
         barStyle="light-content"
       />
       <Header>
-        <H1>SIGN IN</H1>
+        <H1>Sign In</H1>
       </Header>
       <Animatable.View animation="fadeInUpBig" style={[styleGlobal.footer]}>
         <ScrollView
