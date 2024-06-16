@@ -43,8 +43,8 @@ export default () => {
       });
 
       if (response.data.success) {
-        Alert.alert('Success', 'Login Successfull');
-        dispatch(setUser({user: true}));
+        Alert.alert('Success', 'Login Successful');
+        dispatch(setUser(true));
         dispatch(setUserId({userId: response.data.user.id}));
         navigation.dispatch(
           CommonActions.reset({index: 0, routes: [{name: 'Drawer'}]}),
