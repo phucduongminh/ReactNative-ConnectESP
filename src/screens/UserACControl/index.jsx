@@ -17,13 +17,15 @@ import SpeechControl from '../SpeechControl'; // Import the SpeechControl compon
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
+import { useSelector } from 'react-redux';
 
 export default ({navigation, route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const {device_id} = route.params;
   //console.log(device_id);
-  const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
+  const {isSocketConnected} = useSocketContext(); // Use the socket context here
+  const {hostIp} = useSelector(state => state.user.hostIp);
   const [isVoiceScreenVisible, setIsVoiceScreenVisible] = useState(false); // State to manage the visibility of SpeechControl
 
   const handleTemperatureUp = () => {
@@ -65,12 +67,12 @@ export default ({navigation, route}) => {
         undefined,
         undefined,
         port,
-        hostIP,
+        hostIp,
         function (err) {
           if (err) {
             throw err;
           }
-          console.log('Sent JSON object to server:', hostIP);
+          console.log('Sent JSON object to server:', hostIp);
           //socket.close();
         },
       );

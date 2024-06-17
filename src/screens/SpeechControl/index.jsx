@@ -21,7 +21,8 @@ import dgram from 'react-native-udp'; // Assuming you are using this library for
 const SpeechControl = ({mode}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
-  const {isSocketConnected, hostIP} = useSocketContext();
+  const {isSocketConnected} = useSocketContext();
+  const {hostIp} = useSelector(state => state.user.hostIp);
   const {userId} = useSelector(state => state.user.userId);
 
   const requestRecordAudioPermission = async () => {
@@ -102,12 +103,12 @@ const SpeechControl = ({mode}) => {
             undefined,
             undefined,
             port,
-            hostIP,
+            hostIp,
             function (err) {
               if (err) {
                 throw err;
               }
-              console.log('Sent JSON object to server:', hostIP);
+              console.log('Sent JSON object to server:', hostIp);
               //socket.close();
             },
           );

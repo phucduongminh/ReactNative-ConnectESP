@@ -16,6 +16,7 @@ import {Container, Row, Column} from './styled';
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
+import { useSelector } from 'react-redux';
 
 import SpeechControl from '../SpeechControl'; // Import the SpeechControl component
 
@@ -23,8 +24,9 @@ export default ({route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const [isVoiceScreenVisible, setIsVoiceScreenVisible] = useState(false); // State to manage the visibility of SpeechControl
-  const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
-  const {Protocol} = route.params || null;
+  const {isSocketConnected} = useSocketContext(); // Use the socket context here
+  const {Protocol} = route.params || '';
+  const {hostIp} = useSelector(state => state.user.hostIp);
 
   const handleTemperatureUp = () => {
     setCurrentDegree(prevDegree => prevDegree + 1);
@@ -47,7 +49,7 @@ export default ({route}) => {
     const signalToSend = {
       command: messageStageOn ? 'OFF-AC' : 'ON-AC',
       mode: '0',
-      Protocol: Protocol,
+      Protocol: Protocol || '',
     };
 
     const jsonString = JSON.stringify(signalToSend);
@@ -59,10 +61,10 @@ export default ({route}) => {
         undefined,
         undefined,
         port,
-        hostIP,
+        hostIp,
         function (err) {
           if (err) throw err;
-          console.log(`Sent JSON object to server:`, hostIP);
+          console.log(`Sent JSON object to server:`, hostIp);
           setMessageStageOn(prevStatus => !prevStatus);
           socket.close();
         },
