@@ -237,7 +237,7 @@ export default ({route}) => {
       ))}
       <Modal
         visible={isVoiceScreenVisible}
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setIsVoiceScreenVisible(false)}>
         <TouchableWithoutFeedback

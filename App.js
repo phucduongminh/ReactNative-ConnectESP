@@ -32,6 +32,7 @@ import DeviceTypes from './src/screens/DeviceTypes';
 import ACLearnSignal from './src/screens/ACLearnSignal';
 import UserACBrands from './src/screens/UserACBrands';
 import UserACControl from './src/screens/UserACControl';
+import TimerScript from './src/components/TimerScript';
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -62,6 +63,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="UserACControl" component={UserACControl} />
       <Drawer.Screen name="DeviceTypes" component={DeviceTypes} />
       <Drawer.Screen name="SpeechControl" component={SpeechControl} />
+      <Drawer.Screen name="TimerScript" component={TimerScript} />
     </Drawer.Navigator>
   );
 }

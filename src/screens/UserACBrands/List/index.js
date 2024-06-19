@@ -1,4 +1,5 @@
 import React, {useState, useCallback} from 'react';
+import {TouchableOpacity} from 'react-native';
 import t from 'prop-types';
 import Ripple from '../../../components/Ripple';
 import {Container, Content, Name} from './styled';
@@ -6,8 +7,9 @@ import axios from 'axios';
 import {useSelector} from 'react-redux';
 import {API_URL} from '../../../../constants';
 import {useFocusEffect} from '@react-navigation/native';
+import Feather from 'react-native-vector-icons/Feather';
 
-export default function List({handleNavigate, typeId}) {
+export default function List({handleNavigate, typeId, modalVisible}) {
   const [device, setDevice] = useState([]);
   const {userId} = useSelector(state => state.user.userId);
 
@@ -44,6 +46,12 @@ export default function List({handleNavigate, typeId}) {
           <Ripple onPress={() => handleNavigate(device_id)} radius={0}>
             <Content>
               <Name>{device_name}</Name>
+              <TouchableOpacity
+                onPress={() => {
+                  modalVisible();
+                }}>
+                <Feather name="plus-square" color="gray" size={20} />
+              </TouchableOpacity>
             </Content>
           </Ripple>
         );
@@ -55,4 +63,5 @@ export default function List({handleNavigate, typeId}) {
 List.propTypes = {
   handleNavigate: t.func.isRequired,
   typeId: t.number.isRequired,
+  modalVisible: t.func.isRequired, // Added propTypes check for modalVisible
 };

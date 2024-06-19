@@ -72,13 +72,13 @@ const MainDrawer = props => {
           </Opcoes>
         </StyledTouchableOpacity>
 
-        <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('SpeechControl')}>
+        {/* <StyledTouchableOpacity
+          onPress={() => props.navigation.navigate('TimerScript')}>
           <Opcoes>
             <MaterialIcons name="mic" size={28} style={{color: 'white'}} />
             <TextItem>Voice Control</TextItem>
           </Opcoes>
-        </StyledTouchableOpacity>
+        </StyledTouchableOpacity> */}
 
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Preload')}>
