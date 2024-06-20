@@ -223,7 +223,7 @@ export default ({navigation}) => {
                     : [db.theme.colors.primary, db.theme.colors.primary]
                 }
                 style={styleGlobal.signIn}>
-                <Text style={styleGlobal.textBtnSignIn}>Sign In</Text>
+                <Text style={styleGlobal.textBtnSignIn}>Send</Text>
               </LinearGradient>
             </TouchableOpacity>
           </ButtonSign>

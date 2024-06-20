@@ -13,8 +13,13 @@ import axios from 'axios';
 
 export default ({navigation, route}) => {
   const [visible, setVisible] = useState(false);
-  const modalVisible = () => {
+  const [device_id, setDevice_id] = useState(null);
+  const [Protocol, setProtocol] = useState(null);
+
+  const modalVisible = (device_id, Protocol) => {
     setVisible(previousState => !previousState);
+    setDevice_id(device_id);
+    setProtocol(Protocol);
   };
 
   const {type_id} = route.params;
@@ -52,7 +57,7 @@ export default ({navigation, route}) => {
           <View style={styles.modalOverlay} />
         </TouchableWithoutFeedback>
         <View style={styles.modalContainer}>
-          <TimerScript />
+          <TimerScript device_id={device_id} Protocol={Protocol} />
         </View>
       </Modal>
     </Container>

@@ -48,7 +48,7 @@ export default function List({handleNavigate, typeId, modalVisible}) {
               <Name>{device_name}</Name>
               <TouchableOpacity
                 onPress={() => {
-                  modalVisible();
+                  modalVisible(device_id, Protocol);
                 }}>
                 <Feather name="plus-square" color="gray" size={20} />
               </TouchableOpacity>

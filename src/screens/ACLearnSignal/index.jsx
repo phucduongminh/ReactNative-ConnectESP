@@ -36,10 +36,8 @@ export default ({navigation, route}) => {
       );
       return;
     }
-
-    if (id === 'power') {
-      id = messageStageOn ? 'power-off' : 'power';
-    }
+    
+    id = messageStageOn ? 'power-off' : 'power';
 
     const signalToSend = {
       command: 'LEARN',
