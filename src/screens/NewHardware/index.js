@@ -15,6 +15,7 @@ import styleGlobal from '../../styles/global';
 import {useSocketContext} from '../../../SocketContext';
 import dgram from 'react-native-udp';
 import {port} from '../../../constants';
+import { useSelector } from 'react-redux';
 
 export default () => {
   const notFoundText = 'Search result';
@@ -22,9 +23,9 @@ export default () => {
   const [loading, setLoading] = useState(false);
   const [foundEspList, setFoundEspList] = useState([{key: notFoundText}]);
   //const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const {isSocketConnected, setIsSocketConnected, hostIP, setHostIP} =
-    useSocketContext();
-  //const [hostIP, setHostIP] = useState('');
+  const {isSocketConnected, setIsSocketConnected} = useSocketContext();
+  const {hostIp} = useSelector(state => state.user.hostIp);
+  //const [hostIp, setHostIP] = useState('');
 
   //const [jsonString, setJsonString] = useState('');
 
@@ -34,7 +35,7 @@ export default () => {
 
   /*useEffect(() => {
     if (foundEspList.length > 1) {
-      console.log('I found an esp8266 on the network!', hostIP);
+      console.log('I found an esp8266 on the network!', hostIp);
     }
   }, [foundEspList]);*/
 
@@ -53,7 +54,7 @@ export default () => {
         options.host,
         function (err) {
           if (err) throw err;
-          console.log('Message sent!');
+          console.log('Message sent to', options.host);
         },
       );
     });
@@ -68,7 +69,7 @@ export default () => {
           buffer.data !== 'WAIT'
         ) {
           console.log('data.data', buffer.data);
-          setHostIP(buffer.data);
+          //setHostIP(buffer.data);
           // Check if the list already contains an item with the new value
           if (!foundEspList.some(item => item.key === buffer.data)) {
             setFoundEspList(prevList => [
@@ -88,7 +89,7 @@ export default () => {
     setFoundEspList([{key: notFoundText}]);
     const options = {
       port: port,
-      host: '192.168.1.57',
+      host: hostIp,
       localAddress: '0.0.0.0',
       reuseAddress: true,
     };
@@ -120,7 +121,7 @@ export default () => {
         undefined,
         undefined,
         port,
-        hostIP,
+        hostIp,
         function (err) {
           if (err) throw err;
         },

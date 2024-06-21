@@ -9,12 +9,14 @@ import {Container, Row, Column} from './styled';
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
+import { useSelector } from 'react-redux';
 
 export default ({navigation, route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const {device_id} = route.params;
-  const {isSocketConnected, hostIP} = useSocketContext(); // Use the socket context here
+  const {isSocketConnected} = useSocketContext(); // Use the socket context here
+  const {hostIp} = useSelector(state => state.user.hostIp);
 
   const handleTemperatureUp = () => {
     setCurrentDegree(prevDegree => prevDegree + 1);
@@ -34,10 +36,8 @@ export default ({navigation, route}) => {
       );
       return;
     }
-
-    if (id === 'power') {
-      id = messageStageOn ? 'power-off' : 'power';
-    }
+    
+    id = messageStageOn ? 'power-off' : 'power';
 
     const signalToSend = {
       command: 'LEARN',
@@ -55,12 +55,12 @@ export default ({navigation, route}) => {
         undefined,
         undefined,
         port,
-        hostIP,
+        hostIp,
         function (err) {
           if (err) {
             throw err;
           }
-          console.log('Sent JSON object to server:', hostIP);
+          console.log('Sent JSON object to server:', hostIp);
           //socket.close();
         },
       );
@@ -69,7 +69,7 @@ export default ({navigation, route}) => {
           data: msg.toString(),
         };
         console.log('data.data', buffer.data);
-        if (buffer.data !== 'LEARN-FAIL') {
+        if (buffer.data !== 'LEARN-FAIL' && buffer.data !== 'PRO') {
           console.log('data.data', buffer.data);
           alert('Learn signal successfully! ');
           setMessageStageOn(prevStatus => !prevStatus);
@@ -131,6 +131,23 @@ export default ({navigation, route}) => {
       buttons: [
         {
           id: v4(),
+          type: 'button',
+          icon: 'mic-off',
+          action: () => {},
+        },
+        {
+          id: v4(),
+          type: 'button',
+          icon: 'wind',
+          action: () => {},
+        },
+      ],
+    },
+    {
+      id: v4(),
+      buttons: [
+        {
+          id: v4(),
           type: 'grouped',
           label: 'fan',
           buttons: {
@@ -150,7 +167,7 @@ export default ({navigation, route}) => {
           buttons: {
             center: {
               action: () => {},
-              icon: 'wind',
+              icon: 'clock',
             },
           },
         },

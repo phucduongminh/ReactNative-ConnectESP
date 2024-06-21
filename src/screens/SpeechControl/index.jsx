@@ -1,15 +1,29 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, PermissionsAndroid} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  PermissionsAndroid,
+  Alert,
+} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AudioRecord from 'react-native-audio-record';
-import RNFS from 'react-native-fs';
+import RNFS, {stat} from 'react-native-fs';
 import axios from 'axios';
 import {API_URL} from '../../../constants';
 import {Container} from './styles';
+import {useSelector} from 'react-redux';
+import {port} from '../../../constants';
 
-export default () => {
+import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
+import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
+
+const SpeechControl = ({mode}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
+  const {isSocketConnected} = useSocketContext();
+  const {hostIp} = useSelector(state => state.user.hostIp);
+  const {userId} = useSelector(state => state.user.userId);
 
   const requestRecordAudioPermission = async () => {
     try {
@@ -64,7 +78,59 @@ export default () => {
         {headers: {'Content-Type': 'application/json'}},
       );
       setText(response.data.text);
+      const res = await axios.post(
+        `${API_URL}/api/voice/process`,
+        {text: response.data.text},
+        {headers: {'Content-Type': 'application/json'}},
+      );
+      //console.log('Response from server:', res.data);
+      if (res.data.success) {
+        const signalToSend = {
+          command: res.data.data.command,
+          user_id: userId,
+          ordinal: res.data.data.ordinal || 1,
+          mode: mode.toString(),
+        };
+
+        const jsonString = JSON.stringify(signalToSend);
+        console.log('Sending JSON object to server:', jsonString);
+        const socket = dgram.createSocket('udp4');
+
+        socket.bind(port);
+        socket.once('listening', function () {
+          socket.send(
+            jsonString,
+            undefined,
+            undefined,
+            port,
+            hostIp,
+            function (err) {
+              if (err) {
+                throw err;
+              }
+              console.log('Sent JSON object to server:', hostIp);
+              //socket.close();
+            },
+          );
+          socket.on('message', function (msg, rinfo) {
+            var buffer = {
+              data: msg.toString(),
+            };
+            console.log('data.data', buffer.data);
+            if (buffer.data !== 'NETWORK-ERR') {
+              console.log('data.data', buffer.data);
+              socket.close();
+            }
+            if (buffer.data === 'NETWORK-ERR') {
+              alert('Server is not available!');
+            }
+          });
+        });
+      } else {
+        Alert.alert('Try again!');
+      }
     } catch (error) {
+      Alert.alert('Try again!');
       console.error('Error making network request', error);
     }
   };
@@ -85,18 +151,22 @@ export default () => {
           style={{
             padding: 30,
             borderRadius: 100,
-            backgroundColor: isRecording ? '#4285F4' : 'transparent',
+            backgroundColor: isRecording ? '#4083ef' : 'transparent',
             borderColor: isRecording ? 'transparent' : 'black',
             borderWidth: 8,
           }}>
           <Feather
             name="mic"
-            size={100}
+            size={80}
             color={isRecording ? 'white' : 'black'}
           />
         </TouchableOpacity>
-        <Text style={{fontSize: 20, marginTop: 20}}>{text}</Text>
+        <Text style={{fontSize: 24, marginTop: 20, color: '#4285F4'}}>
+          {text}
+        </Text>
       </View>
     </Container>
   );
 };
+
+export default SpeechControl;

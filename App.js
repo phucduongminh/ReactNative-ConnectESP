@@ -1,11 +1,11 @@
-/* eslint-disable prettier/prettier */
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {ThemeProvider} from 'styled-components';
 import {Provider} from 'react-redux';
-import {store} from './src/redux/store';
+import {PersistGate} from 'redux-persist/integration/react';
+import {store, persistor} from './src/redux/store';
 
 import MainDrawer from './src/stacks/MainDrawer';
 import Preload from './src/screens/Preload';
@@ -32,6 +32,7 @@ import DeviceTypes from './src/screens/DeviceTypes';
 import ACLearnSignal from './src/screens/ACLearnSignal';
 import UserACBrands from './src/screens/UserACBrands';
 import UserACControl from './src/screens/UserACControl';
+import TimerScript from './src/components/TimerScript';
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -62,26 +63,29 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="UserACControl" component={UserACControl} />
       <Drawer.Screen name="DeviceTypes" component={DeviceTypes} />
       <Drawer.Screen name="SpeechControl" component={SpeechControl} />
+      <Drawer.Screen name="TimerScript" component={TimerScript} />
     </Drawer.Navigator>
   );
 }
 
 const StackApp = createStackNavigator();
 function MainStack({navigation}) {
-  const {user} = useSelector(state => state.user.user);
+  const user = useSelector(state => state.user.user);
+  console.log('User state:', user); // Debug statement
   return (
     <StackApp.Navigator screenOptions={{headerShown: false}}>
-      {user && (
+      {user ? (
         <StackApp.Screen
           name="Drawer"
           component={DrawerNavigator}
           options={navOptionHandler}
         />
+      ) : (
+        <>
+          <StackApp.Screen name="SignIn" component={SignIn} />
+          <StackApp.Screen name="SignUp" component={SignUp} />
+        </>
       )}
-      <StackApp.Screen name="SignIn" component={SignIn} />
-      <StackApp.Screen name="SignUp" component={SignUp} />
-      {/* {!user && <StackApp.Screen name="SignIn" component={SignIn} />}
-      {!user && <StackApp.Screen name="SignUp" component={SignUp} />} */}
     </StackApp.Navigator>
   );
 }
@@ -89,13 +93,15 @@ function MainStack({navigation}) {
 export default function App() {
   return (
     <Provider store={store}>
-      <SocketProvider>
-        <ThemeProvider theme={theme.dark}>
-          <NavigationContainer>
-            <MainStack />
-          </NavigationContainer>
-        </ThemeProvider>
-      </SocketProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <SocketProvider>
+          <ThemeProvider theme={theme.dark}>
+            <NavigationContainer>
+              <MainStack />
+            </NavigationContainer>
+          </ThemeProvider>
+        </SocketProvider>
+      </PersistGate>
     </Provider>
   );
 }

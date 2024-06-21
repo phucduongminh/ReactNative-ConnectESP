@@ -100,7 +100,7 @@ const ModalForm = ({
   };
 
   return (
-    <Modal animationType="slide" transparent={true} visible={modalVisible}>
+    <Modal animationType="fade" transparent={true} visible={modalVisible}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Add New Device</Text>

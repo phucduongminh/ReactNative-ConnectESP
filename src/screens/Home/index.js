@@ -23,11 +23,17 @@ export default ({navigation}) => {
       return;
     }
 
+    const signalToSend = {
+      command: 'RECEIVE',
+    };
+
+    const jsonString = JSON.stringify(signalToSend);
+
     // Reuse the existing socket instance to send "HOME" signal
     socket.bind(port);
     socket.once('listening', function () {
       socket.send(
-        'RECEIVE',
+        jsonString,
         undefined,
         undefined,
         port,
@@ -45,12 +51,7 @@ export default ({navigation}) => {
         console.log('data.data', buffer.data);
         if (buffer.data !== 'UNKNOWN' && buffer.data !== 'WAIT') {
           alert('Remote Identified! Device: ' + buffer.data);
-          navigation.navigate('ACControl');
-          /*socket.send('SEND', undefined, undefined, port, hostIP, function(err) {
-            if (err) throw err  
-            console.log(hostIP) 
-            //socket.close();
-          })*/
+          navigation.navigate('ACControl', {Protocol: buffer.data});
           socket.close();
         }
         if (buffer.data === 'UNKNOWN') {
@@ -91,6 +92,7 @@ export default ({navigation}) => {
             <Text style={styleGlobal.textBtnSignUp}>Add New Remote</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={() => navigation.navigate('Devices')}
             style={[styleGlobal.signIn, styleGlobal.signInColor]}>
             <Text style={styleGlobal.textBtnSignUp}>Choose Device</Text>
           </TouchableOpacity>

@@ -16,9 +16,12 @@ import {Container, Action, ButtonSign, Header, H1} from './styles';
 import * as Animatable from 'react-native-animatable';
 import styleGlobal from '../../styles/global';
 import db from '../../../db.json';
+import { useSocketContext } from '../../../SocketContext';
+import { setHostIp } from '../../redux/slices/user';
+import { useDispatch } from 'react-redux';
 
-export default ({ navigation }) => {
-  // Khai báo các biến trạng thái cho tài khoản, mật khẩu và địa chỉ IP của ESP32
+export default ({navigation}) => {
+  const dispatch = useDispatch();
   const [espIP, setEspIP] = useState('');
   const [data, setData] = React.useState({
     email: '',
@@ -29,6 +32,7 @@ export default ({ navigation }) => {
     isValidEmail: true,
     isValidPassword: true,
   });
+  const {setHostIP} = useSocketContext();
 
   const textEmail = val => {
     if (val.trim().length > 0) {
@@ -86,42 +90,35 @@ export default ({ navigation }) => {
     });
   };
 
-  // Hàm gửi dữ liệu cho ESP32 qua chế độ Access point
   const sendData = async () => {
-    // Tạo một biến để kiểm tra xem có lỗi không
     let error = false;
-    // Kiểm tra xem tài khoản và mật khẩu có rỗng không
     if (data.email === '' || data.password === '') {
       Alert.alert('Không thành công', 'Vui lòng nhập tài khoản và mật khẩu');
-      // Đặt biến error là true
       error = true;
     }
-    NetworkInfo.getIPAddress().then(ip => {
-      // Nếu địa chỉ IP có dạng 192.168.4.x, tức là kết nối với ESP32
+
+    NetworkInfo.getIPV4Address().then(ip => {
       if (ip.startsWith('192.168.4.')) {
-        // Thiết lập địa chỉ IP của ESP32 là 192.168.4.1
         setEspIP('192.168.4.1');
+        //console.log(ip);
       } else {
-        // Ngược lại, hiển thị thông báo lỗi
         Alert.alert('Không thành công', 'Vui lòng kết nối với wifi của ESP32');
-        // Đặt biến error là true
         error = true;
       }
     });
+
     if (!error) {
-      // Tạo một đối tượng XMLHttpRequest để gửi dữ liệu
       let xhr = new XMLHttpRequest();
-      // Mở một kết nối POST đến địa chỉ IP của ESP32
-      xhr.open('POST', 'http://' + espIP);
-      // Thiết lập kiểu nội dung là application/json
+      xhr.open('POST', 'http://' + espIP + ':80/post');
       xhr.setRequestHeader('Content-Type', 'application/json');
-      // Gửi dữ liệu dưới dạng chuỗi JSON
       xhr.send(JSON.stringify({wifiname: data.email, password: data.password}));
-      // Xử lý kết quả trả về
       xhr.onload = () => {
-        // Nếu mã trạng thái là 200, tức là thành công
         if (xhr.status === 200) {
-          // Hiển thị thông báo thành công
+          const responseJson = xhr.responseText; // Assuming xhr.responseText is your JSON response from the server
+          const responseObject = JSON.parse(responseJson);
+          console.log(responseObject.local_ip);
+          setHostIP(responseObject.local_ip);
+          dispatch(setHostIp({hostIp: responseObject.local_ip}));
           Alert.alert('Thành công', 'Đã gửi dữ liệu cho ESP32');
           setData({
             email: '',
@@ -131,25 +128,21 @@ export default ({ navigation }) => {
             secureTextEntry: true,
             isValidEmail: true,
             isValidPassword: true,
-          })
+          });
         } else {
-          // Ngược lại, hiển thị thông báo lỗi
           Alert.alert('Không thành công', 'Không thể gửi dữ liệu cho ESP32');
+          console.log('Request failed. Status:', xhr.status);
         }
       };
     }
   };
 
-  // Hàm lấy địa chỉ IP của ESP32 khi ứng dụng khởi động
   useEffect(() => {
-    // Lấy địa chỉ IP của mạng wifi hiện tại
-    NetworkInfo.getIPAddress().then(ip => {
-      // Nếu địa chỉ IP có dạng 192.168.4.x, tức là kết nối với ESP32
+    NetworkInfo.getIPV4Address().then(ip => console.log(ip));
+    NetworkInfo.getIPV4Address().then(ip => {
       if (ip.startsWith('192.168.4.')) {
-        // Thiết lập địa chỉ IP của ESP32 là 192.168.4.1
         setEspIP('192.168.4.1');
       } else {
-        // Ngược lại, hiển thị thông báo lỗi
         Alert.alert('Cài đặt', 'Vui lòng kết nối với wifi của ESP32');
       }
     });
@@ -230,7 +223,7 @@ export default ({ navigation }) => {
                     : [db.theme.colors.primary, db.theme.colors.primary]
                 }
                 style={styleGlobal.signIn}>
-                <Text style={styleGlobal.textBtnSignIn}>Sign In</Text>
+                <Text style={styleGlobal.textBtnSignIn}>Send</Text>
               </LinearGradient>
             </TouchableOpacity>
           </ButtonSign>

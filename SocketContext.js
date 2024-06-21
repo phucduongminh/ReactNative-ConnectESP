@@ -1,6 +1,6 @@
 // SocketContext.js
 
-import {createContext, useContext, useState} from 'react';
+import React, {createContext, useContext, useState} from 'react';
 //import dgram from 'react-native-udp'
 
 const SocketContext = createContext();

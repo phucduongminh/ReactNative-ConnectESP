@@ -151,7 +151,7 @@ export default () => {
         <GoBack onPress={() => navigation.navigate('SignIn')}>
           <FontAwesome name="arrow-left" size={20} style={{color: '#ffff'}} />
         </GoBack>
-        <H1>SIGN UP</H1>
+        <H1>Sign Up</H1>
       </Header>
       <Animatable.View animation="fadeInUpBig" style={styleGlobal.footer}>
         <ScrollView
