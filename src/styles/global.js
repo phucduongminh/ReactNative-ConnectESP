@@ -82,6 +82,12 @@ export default StyleSheet.create({
     borderWidth: 1,
     marginTop: 15,
   },
+  signInDisabled: {
+    borderColor: db.theme.colors.secondary,
+    borderWidth: 1,
+    marginTop: 15,
+  },
+
   // ==== FIM TELA SignIn ==== //
 
   // ==== HOME ==== //
