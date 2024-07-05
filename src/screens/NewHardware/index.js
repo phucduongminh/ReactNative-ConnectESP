@@ -23,7 +23,7 @@ export default () => {
   const [loading, setLoading] = useState(false);
   const [foundEspList, setFoundEspList] = useState([{key: notFoundText}]);
   //const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const {isSocketConnected, setIsSocketConnected} = useSocketContext();
+  const {isSocketConnected, setIsSocketConnected, setHostIP} = useSocketContext();
   const {hostIp} = useSelector(state => state.user.hostIp);
   //const [hostIp, setHostIP] = useState('');
 
@@ -69,7 +69,7 @@ export default () => {
           buffer.data !== 'WAIT'
         ) {
           console.log('data.data', buffer.data);
-          //setHostIP(buffer.data);
+          setHostIP(buffer.data);
           // Check if the list already contains an item with the new value
           if (!foundEspList.some(item => item.key === buffer.data)) {
             setFoundEspList(prevList => [

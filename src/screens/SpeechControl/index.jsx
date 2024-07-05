@@ -51,24 +51,26 @@ const SpeechControl = ({mode}) => {
     requestRecordAudioPermission();
   }, []);
 
+  //Bắt đầu ghi âm thanh
   const startRecording = async () => {
     setIsRecording(true);
     const options = {
-      sampleRate: 16000,
-      channels: 1,
-      bitsPerSample: 16,
-      wavFile: 'test.wav',
+      sampleRate: 16000, //16000 Hz, âm thanh được lấy mẫu 16000 lần mỗi giây
+      channels: 1, //Kênh đơn, dành cho âm thanh đơn âm
+      bitsPerSample: 16, //Tiêu chuẩn cho âm thanh chất lượng cao
+      wavFile: 'audio.wav', //File .wav với chất lượng âm thanh cao.
     };
 
     await AudioRecord.init(options);
     AudioRecord.start();
   };
 
+  //Dừng ghi âm và gửi file âm thanh lên server
   const stopRecording = async () => {
     setIsRecording(false);
-    const audioFile = await AudioRecord.stop();
+    const audioFile = await AudioRecord.stop(); //File audio được lưu lại
 
-    // Read the file as base64
+    //Đọc file âm thanh và encode với base64 để gửi lên server
     const audioData = await RNFS.readFile(audioFile, 'base64');
 
     try {
