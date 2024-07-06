@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Container, Header, H1, PrimaryText} from './styles';
 import {Text, ScrollView, StatusBar, TouchableOpacity} from 'react-native';
 import db from '../../../db.json';
@@ -10,7 +10,8 @@ import {port} from '../../../constants';
 
 export default ({navigation}) => {
   const {isSocketConnected, hostIP} = useSocketContext();
-  const socket = dgram.createSocket('udp4');
+  //const socket = dgram.createSocket('udp4');
+  //const [socket, setSocket] = useState(null);
 
   function sendHomeSignal() {
     // Implement the logic to send "HOME" signal to the server
@@ -22,6 +23,13 @@ export default ({navigation}) => {
       );
       return;
     }
+
+    // if (!socket) {
+    //   // Tạo socket mới nếu chưa có
+    //   setSocket(dgram.createSocket('udp4'));
+    // }
+
+    const socket = dgram.createSocket('udp4');
 
     const signalToSend = {
       command: 'RECEIVE',
@@ -49,13 +57,21 @@ export default ({navigation}) => {
           data: msg.toString(),
         };
         console.log('data.data', buffer.data);
-        if (buffer.data !== 'UNKNOWN' && buffer.data !== 'WAIT') {
+        if (
+          buffer.data !== 'UNKNOWN' &&
+          buffer.data !== 'WAIT' &&
+          buffer.data !== 'UNSUPPORTED'
+        ) {
           alert('Remote Identified! Device: ' + buffer.data);
           navigation.navigate('ACControl', {Protocol: buffer.data});
           socket.close();
         }
         if (buffer.data === 'UNKNOWN') {
           alert('UNKNOWN device!');
+        }
+        if (buffer.data === 'UNSUPPORTED') {
+          alert('Unsupported device!');
+          socket.close(); // Đóng socket sau khi nhận được UNSUPPORTED
         }
       });
     });
