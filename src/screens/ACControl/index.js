@@ -17,7 +17,6 @@ import {useSocketContext} from '../../../SocketContext'; // Assuming you have th
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
 import {useSelector} from 'react-redux';
-import eventEmitter from '../../../eventEmitter';
 
 import SpeechControl from '../SpeechControl'; // Import the SpeechControl component
 
@@ -76,6 +75,13 @@ export default ({route}) => {
       message.destinationName = 'esp32/request';
       message.retained = false;
       client.send(message);
+      client.onMessageArrived = message => {
+        const parsedMessage = JSON.parse(message.payloadString);
+        if (parsedMessage.message === 'RECEIVE') {
+          console.log('Message received:', parsedMessage);
+          setMessageStageOn(prevStatus => !prevStatus);
+        }
+      };
     }
   };
 
