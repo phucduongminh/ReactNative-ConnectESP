@@ -53,14 +53,14 @@ const MainDrawer = props => {
         </StyledTouchableOpacity>
 
         <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('ConnectBluetooth')}>
+          onPress={() => props.navigation.navigate('Mqtt')}>
           <Opcoes>
             <MaterialIcons
               name="bluetooth"
               size={28}
               style={{color: 'white'}}
             />
-            <TextItem>ConnectBluetooth</TextItem>
+            <TextItem>Far From Home</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
 
@@ -68,17 +68,9 @@ const MainDrawer = props => {
           onPress={() => props.navigation.navigate('APMode')}>
           <Opcoes>
             <MaterialIcons name="login" size={28} style={{color: 'white'}} />
-            <TextItem>APMode</TextItem>
+            <TextItem>Wi-fi Setting</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
-
-        {/* <StyledTouchableOpacity
-          onPress={() => props.navigation.navigate('TimerScript')}>
-          <Opcoes>
-            <MaterialIcons name="mic" size={28} style={{color: 'white'}} />
-            <TextItem>Voice Control</TextItem>
-          </Opcoes>
-        </StyledTouchableOpacity> */}
 
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Preload')}>

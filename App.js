@@ -33,6 +33,7 @@ import ACLearnSignal from './src/screens/ACLearnSignal';
 import UserACBrands from './src/screens/UserACBrands';
 import UserACControl from './src/screens/UserACControl';
 import TimerScript from './src/components/TimerScript';
+import Mqtt from './src/screens/Mqtt';
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -64,6 +65,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="DeviceTypes" component={DeviceTypes} />
       <Drawer.Screen name="SpeechControl" component={SpeechControl} />
       <Drawer.Screen name="TimerScript" component={TimerScript} />
+      <Drawer.Screen name="Mqtt" component={Mqtt} />
     </Drawer.Navigator>
   );
 }
