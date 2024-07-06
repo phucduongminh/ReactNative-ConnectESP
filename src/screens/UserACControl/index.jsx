@@ -17,14 +17,14 @@ import SpeechControl from '../SpeechControl'; // Import the SpeechControl compon
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 export default ({navigation, route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const {device_id} = route.params;
   //console.log(device_id);
-  const {isSocketConnected} = useSocketContext(); // Use the socket context here
+  const {isSocketConnected, isMqtt, client} = useSocketContext(); // Use the socket context here
   const {hostIp} = useSelector(state => state.user.hostIp);
   const [isVoiceScreenVisible, setIsVoiceScreenVisible] = useState(false); // State to manage the visibility of SpeechControl
 
@@ -36,59 +36,61 @@ export default ({navigation, route}) => {
     setCurrentDegree(prevDegree => prevDegree - 1);
   };
 
-  const learnPowerSignal = id => () => {
-    console.log(device_id);
-    const socket = dgram.createSocket('udp4');
-
-    if (!isSocketConnected) {
+  const sendLearnPowerSignal = () => () => {
+    if (!isSocketConnected && !isMqtt) {
       alert(
-        'Socket is not connected. Please start the search to connect to the server.',
+        'Neither Socket nor MQTT is connected. Please check your connections.',
       );
       return;
     }
-    
-    id = messageStageOn ? 'power-off' : 'power';
 
     const signalToSend = {
       command: 'SEND-LEARN',
       device_id: device_id,
-      button_id: id,
+      button_id: messageStageOn ? 'power-off' : 'power',
+      ...(isMqtt && {client_id: 'app-01'}), // Thêm client_id nếu là MQTT
     };
 
-    const jsonString = JSON.stringify(signalToSend);
-    console.log('Sending JSON object to server:', jsonString);
+    console.log('Sending JSON object to server:', JSON.stringify(signalToSend));
 
-    socket.bind(port);
-    socket.once('listening', function () {
-      socket.send(
-        jsonString,
-        undefined,
-        undefined,
-        port,
-        hostIp,
-        function (err) {
-          if (err) {
-            throw err;
+    if (isSocketConnected) {
+      const socket = dgram.createSocket('udp4');
+      const jsonString = JSON.stringify(signalToSend);
+
+      socket.bind(port);
+      socket.once('listening', function () {
+        socket.send(
+          jsonString,
+          undefined,
+          undefined,
+          port,
+          hostIp,
+          function (err) {
+            if (err) {
+              throw err;
+            }
+            console.log('Sent JSON object to server:', hostIp);
+          },
+        );
+
+        socket.on('message', function (msg, rinfo) {
+          const data = msg.toString();
+          console.log('Received data from server:', data);
+
+          if (data !== 'NETWORK-ERR') {
+            setMessageStageOn(prevStatus => !prevStatus);
+            socket.close();
+          } else if (data === 'NETWORK-ERR') {
+            alert('Server is not available!');
           }
-          console.log('Sent JSON object to server:', hostIp);
-          //socket.close();
-        },
-      );
-      socket.on('message', function (msg, rinfo) {
-        var buffer = {
-          data: msg.toString(),
-        };
-        console.log('data.data', buffer.data);
-        if (buffer.data !== 'NETWORK-ERR') {
-          console.log('data.data', buffer.data);
-          setMessageStageOn(prevStatus => !prevStatus);
-          socket.close();
-        }
-        if (buffer.data === 'NETWORK-ERR') {
-          alert('Server is not available!');
-        }
+        });
       });
-    });
+    } else if (isMqtt) {
+      const message = new Paho.MQTT.Message(JSON.stringify(signalToSend));
+      message.destinationName = 'esp32/request'; // Hoặc topic MQTT của bạn
+      message.retained = false;
+      client.send(message); // Sử dụng client MQTT của bạn
+    }
   };
 
   const data = [
@@ -125,7 +127,7 @@ export default ({navigation, route}) => {
           type: 'rounded',
           buttons: {
             center: {
-              action: learnPowerSignal('power'),
+              action: sendLearnPowerSignal('power'),
               icon: 'power',
             },
           },

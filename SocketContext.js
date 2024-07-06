@@ -11,6 +11,7 @@ export const SocketProvider = ({children}) => {
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [hostIP, setHostIP] = useState('');
   const [isMqtt, setIsMqtt] = useState(false);
+  const [client, setClient] = useState(null);
 
   return (
     <SocketContext.Provider
@@ -21,6 +22,8 @@ export const SocketProvider = ({children}) => {
         setHostIP,
         isMqtt,
         setIsMqtt,
+        client,
+        setClient,
       }}>
       {children}
     </SocketContext.Provider>

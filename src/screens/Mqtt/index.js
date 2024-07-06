@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 import {Input, Button} from '@rneui/base';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import init from 'react_native_mqtt';
 import {host_mqtt, username_mqtt, password_mqtt} from '../../../constants';
 import db from '../../../db';
+import {useSocketContext} from '../../../SocketContext';
 
 init({
   size: 10000,
@@ -20,97 +21,90 @@ const options = {
   id: 'app-01',
 };
 
-client = new Paho.MQTT.Client(options.host, options.port, options.path);
+const client = new Paho.MQTT.Client(options.host, options.port, options.path);
 
-class Mqtt extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      topic: 'esp32/acks',
-      subscribedTopic: '',
-      message: '',
-      messageList: [],
-      status: '',
-    };
-    client.onConnectionLost = this.onConnectionLost;
-    client.onMessageArrived = this.onMessageArrived;
-  }
+const Mqtt = () => {
+  const [topic, setTopic] = useState('esp32/response');
+  const [subscribedTopic, setSubscribedTopic] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageList, setMessageList] = useState([]);
+  const [status, setStatus] = useState('');
+  const {setIsMqtt, setClient} = useSocketContext();
 
-  connect = () => {
+  useEffect(() => {
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+  }, []);
+
+  const connect = useCallback(() => {
     if (client.isConnected()) {
-      // Check if already connected
       console.log('Already connected');
       return;
     }
 
-    this.setState({status: 'connecting'}, () => {
-      // Use 'connecting' state
-      client.connect({
-        onSuccess: this.onConnect,
-        useSSL: false,
-        timeout: 3,
-        userName: username_mqtt,
-        password: password_mqtt,
-        onFailure: this.onFailure,
-      });
+    setStatus('connecting');
+    client.connect({
+      onSuccess: onConnect,
+      useSSL: false,
+      timeout: 3,
+      userName: username_mqtt,
+      password: password_mqtt,
+      onFailure: onFailure,
     });
-  };
+  }, []);
 
-  onConnect = () => {
+  const onConnect = () => {
     console.log('onConnect');
-    this.setState({status: 'connected'});
-    this.setState({subscribedTopic: this.state.topic}, () => {
-      client.subscribe(this.state.subscribedTopic, {qos: 0});
-    });
+    setStatus('connected');
+    setIsMqtt(true);
+    setClient(client);
+    setSubscribedTopic(topic);
+    client.subscribe(topic, {qos: 0});
   };
 
-  onFailure = err => {
+  const onFailure = err => {
     console.log('Connect failed!');
     console.log(err);
-    this.setState({status: 'failed'});
+    setStatus('failed');
+    setIsMqtt(false);
+    setClient(null);
   };
 
-  disconnect = () => {
+  const disconnect = () => {
     console.log('Disconnected');
-    client.unsubscribe(this.state.subscribedTopic);
+    client.unsubscribe(subscribedTopic);
     client.disconnect();
-    this.setState({
-      status: 'disconnected',
-      subscribedTopic: '',
-      messageList: [],
-    }); // Update state
+    setStatus('disconnected');
+    setSubscribedTopic('');
+    setMessageList([]);
+    setIsMqtt(false);
+    setClient(null);
   };
 
-  onConnectionLost = responseObject => {
+  const onConnectionLost = responseObject => {
     if (responseObject.errorCode !== 0) {
       console.log('onConnectionLost:' + responseObject.errorMessage);
-      this.setState({status: 'failed'});
+      setStatus('failed');
     }
   };
 
-  onMessageArrived = message => {
+  const onMessageArrived = message => {
     console.log('onMessageArrived:' + message.payloadString);
     const parsedMessage = JSON.parse(message.payloadString);
     const displayMessage = `Message: "${parsedMessage.message}"`;
-    const newMessageList = this.state.messageList;
-    newMessageList.unshift(displayMessage);
-    this.setState({messageList: newMessageList});
+    setMessageList(prevMessageList => [displayMessage, ...prevMessageList]);
   };
 
-  onChangeMessage = text => {
-    this.setState({message: text});
-  };
-
-  sendMessage = () => {
-    const message = new Paho.MQTT.Message(
-      JSON.stringify({client_id: options.id, command: this.state.message}),
+  const sendMessage = () => {
+    const msg = new Paho.MQTT.Message(
+      JSON.stringify({client_id: options.id, command: message}),
     );
-    message.destinationName = 'esp32/connect';
-    message.retained = false;
-    client.send(message);
+    msg.destinationName = 'esp32/request';
+    msg.retained = false;
+    client.send(msg);
   };
 
-  renderRow = ({item, index}) => {
+  const renderRow = ({item}) => {
     return (
       <View style={styles.messageComponent}>
         <Text style={styles.textMessage}>{item}</Text>
@@ -118,95 +112,84 @@ class Mqtt extends Component {
     );
   };
 
-  _keyExtractor = (item, index) => item + index;
-
-  render() {
-    const {status, messageList} = this.state;
-    return (
-      <View style={styles.container}>
-        <Text
-          style={[
-            styles.clientIdText,
-            {color: this.state.status === 'connected' ? 'green' : 'black'},
-          ]}>
-          ClientID: {options.id}
-        </Text>
-        {status === 'connected' ? (
-          <View>
-            <Button
-              type="solid"
-              title="DISCONNECT"
-              onPress={this.disconnect}
-              buttonStyle={[
-                styles.connectButton,
-                {backgroundColor: db.theme.colors.primary},
-              ]}
-              icon={{
-                name: 'lan-disconnect',
-                type: 'material-community',
-                color: 'white',
-              }}
-            />
-            {this.state.subscribedTopic ? (
-              <View style={{marginBottom: 30, alignItems: 'center'}}>
-                <Input
-                  label="MESSAGE"
-                  placeholder=""
-                  value={this.state.message}
-                  onChangeText={this.onChangeMessage}
-                />
-                <Button
-                  type="solid"
-                  title="PUBLISH"
-                  onPress={this.sendMessage}
-                  buttonStyle={{
-                    backgroundColor: status === 'failed' ? 'red' : '#397af8',
-                    borderRadius: 10,
-                  }}
-                  icon={{name: 'send', color: 'white'}}
-                  disabled={
-                    !this.state.message || this.state.message.match(/^[ ]*$/)
-                      ? true
-                      : false
-                  }
-                />
-              </View>
-            ) : null}
-          </View>
-        ) : (
+  return (
+    <View style={styles.container}>
+      <Text
+        style={[
+          styles.clientIdText,
+          {color: status === 'connected' ? 'green' : 'black'},
+        ]}>
+        ClientID: {options.id}
+      </Text>
+      {status === 'connected' ? (
+        <View>
           <Button
             type="solid"
-            title="CONNECT"
-            onPress={this.connect}
+            title="DISCONNECT"
+            onPress={disconnect}
             buttonStyle={[
               styles.connectButton,
-              {
-                backgroundColor:
-                  status === 'failed' ? 'red' : db.theme.colors.primary,
-              },
+              {backgroundColor: db.theme.colors.primary},
             ]}
             icon={{
-              name: 'lan-connect',
+              name: 'lan-disconnect',
               type: 'material-community',
               color: 'white',
             }}
-            loading={status === 'connecting'}
-            disabled={status === 'connecting'}
           />
-        )}
-        <View style={styles.messageBox}>
-          <FlatList
-            ref={ref => (this.MessageListRef = ref)}
-            data={messageList}
-            renderItem={this.renderRow}
-            keyExtractor={this._keyExtractor}
-            extraData={this.state}
-          />
+          {subscribedTopic ? (
+            <View style={{marginBottom: 30, alignItems: 'center'}}>
+              <Input
+                label="MESSAGE"
+                placeholder=""
+                value={message}
+                onChangeText={setMessage}
+              />
+              <Button
+                type="solid"
+                title="PUBLISH"
+                onPress={sendMessage}
+                buttonStyle={{
+                  backgroundColor: status === 'failed' ? 'red' : '#397af8',
+                  borderRadius: 10,
+                }}
+                icon={{name: 'send', color: 'white'}}
+                disabled={!message || message.match(/^[ ]*$/) ? true : false}
+              />
+            </View>
+          ) : null}
         </View>
+      ) : (
+        <Button
+          type="solid"
+          title="CONNECT"
+          onPress={connect}
+          buttonStyle={[
+            styles.connectButton,
+            {
+              backgroundColor:
+                status === 'failed' ? 'red' : db.theme.colors.primary,
+            },
+          ]}
+          icon={{
+            name: 'lan-connect',
+            type: 'material-community',
+            color: 'white',
+          }}
+          loading={status === 'connecting'}
+          disabled={status === 'connecting'}
+        />
+      )}
+      <View style={styles.messageBox}>
+        <FlatList
+          data={messageList}
+          renderItem={renderRow}
+          keyExtractor={(item, index) => item + index}
+        />
       </View>
-    );
-  }
-}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
