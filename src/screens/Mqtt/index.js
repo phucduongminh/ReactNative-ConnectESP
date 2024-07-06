@@ -1,10 +1,10 @@
-/* @flow */
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 import {Input, Button} from '@rneui/base';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import init from 'react_native_mqtt';
 import {host_mqtt, username_mqtt, password_mqtt} from '../../../constants';
+import db from '../../../db';
 
 init({
   size: 10000,
@@ -36,19 +36,15 @@ class Mqtt extends Component {
     client.onMessageArrived = this.onMessageArrived;
   }
 
-  onConnect = () => {
-    console.log('onConnect');
-    this.setState({status: 'connected'});
-  };
-
-  onFailure = err => {
-    console.log('Connect failed!');
-    console.log(err);
-    this.setState({status: 'failed'});
-  };
-
   connect = () => {
-    this.setState({status: 'isFetching'}, () => {
+    if (client.isConnected()) {
+      // Check if already connected
+      console.log('Already connected');
+      return;
+    }
+
+    this.setState({status: 'connecting'}, () => {
+      // Use 'connecting' state
       client.connect({
         onSuccess: this.onConnect,
         useSSL: false,
@@ -60,32 +56,45 @@ class Mqtt extends Component {
     });
   };
 
-  onConnectionLost = responseObject => {
-    if (responseObject.errorCode !== 0) {
-      console.log('onConnectionLost:' + responseObject.errorMessage);
-    }
-  };
-
-  onMessageArrived = message => {
-    console.log('onMessageArrived:' + message.payloadString);
-    const newMessageList = this.state.messageList;
-    newMessageList.unshift(message.payloadString);
-    this.setState({messageList: newMessageList});
-  };
-
-  onChangeTopic = text => {
-    this.setState({topic: text});
-  };
-
-  subscribeTopic = () => {
+  onConnect = () => {
+    console.log('onConnect');
+    this.setState({status: 'connected'});
     this.setState({subscribedTopic: this.state.topic}, () => {
       client.subscribe(this.state.subscribedTopic, {qos: 0});
     });
   };
 
-  unSubscribeTopic = () => {
+  onFailure = err => {
+    console.log('Connect failed!');
+    console.log(err);
+    this.setState({status: 'failed'});
+  };
+
+  disconnect = () => {
+    console.log('Disconnected');
     client.unsubscribe(this.state.subscribedTopic);
-    this.setState({subscribedTopic: ''});
+    client.disconnect();
+    this.setState({
+      status: 'disconnected',
+      subscribedTopic: '',
+      messageList: [],
+    }); // Update state
+  };
+
+  onConnectionLost = responseObject => {
+    if (responseObject.errorCode !== 0) {
+      console.log('onConnectionLost:' + responseObject.errorMessage);
+      this.setState({status: 'failed'});
+    }
+  };
+
+  onMessageArrived = message => {
+    console.log('onMessageArrived:' + message.payloadString);
+    const parsedMessage = JSON.parse(message.payloadString);
+    const displayMessage = `Message: "${parsedMessage.message}"`;
+    const newMessageList = this.state.messageList;
+    newMessageList.unshift(displayMessage);
+    this.setState({messageList: newMessageList});
   };
 
   onChangeMessage = text => {
@@ -97,25 +106,14 @@ class Mqtt extends Component {
       JSON.stringify({client_id: options.id, command: this.state.message}),
     );
     message.destinationName = 'esp32/connect';
+    message.retained = false;
     client.send(message);
   };
 
   renderRow = ({item, index}) => {
-    const idMessage = item.split(':');
     return (
-      <View
-        style={[
-          styles.componentMessage,
-          idMessage[0] == options.id
-            ? styles.myMessageComponent
-            : idMessage.length == 1
-            ? styles.introMessage
-            : styles.messageComponent,
-        ]}>
-        <Text
-          style={idMessage.length == 1 ? styles.textIntro : styles.textMessage}>
-          {item}
-        </Text>
+      <View style={styles.messageComponent}>
+        <Text style={styles.textMessage}>{item}</Text>
       </View>
     );
   };
@@ -127,72 +125,28 @@ class Mqtt extends Component {
     return (
       <View style={styles.container}>
         <Text
-          style={{
-            marginBottom: 50,
-            textAlign: 'center',
-            color: this.state.status === 'connected' ? 'green' : 'black',
-          }}>
+          style={[
+            styles.clientIdText,
+            {color: this.state.status === 'connected' ? 'green' : 'black'},
+          ]}>
           ClientID: {options.id}
         </Text>
-        {this.state.status === 'connected' ? (
+        {status === 'connected' ? (
           <View>
             <Button
               type="solid"
               title="DISCONNECT"
-              onPress={() => {
-                client.disconnect();
-                this.setState({
-                  status: '',
-                  subscribedTopic: '',
-                  messageList: [],
-                });
-              }}
-              buttonStyle={{marginBottom: 50, backgroundColor: '#397af8'}}
+              onPress={this.disconnect}
+              buttonStyle={[
+                styles.connectButton,
+                {backgroundColor: db.theme.colors.primary},
+              ]}
               icon={{
                 name: 'lan-disconnect',
                 type: 'material-community',
                 color: 'white',
               }}
             />
-            <View style={{marginBottom: 30, alignItems: 'center'}}>
-              <Input
-                label="TOPIC"
-                placeholder=""
-                value={this.state.topic}
-                onChangeText={this.onChangeTopic}
-                disabled={this.state.subscribedTopic}
-              />
-              {this.state.subscribedTopic ? (
-                <Button
-                  type="solid"
-                  title="UNSUBSCRIBE"
-                  onPress={this.unSubscribeTopic}
-                  buttonStyle={{backgroundColor: '#397af8'}}
-                  icon={{
-                    name: 'link-variant-off',
-                    type: 'material-community',
-                    color: 'white',
-                  }}
-                />
-              ) : (
-                <Button
-                  type="solid"
-                  title="SUBSCRIBE"
-                  onPress={this.subscribeTopic}
-                  buttonStyle={{backgroundColor: '#397af8'}}
-                  icon={{
-                    name: 'link-variant',
-                    type: 'material-community',
-                    color: 'white',
-                  }}
-                  disabled={
-                    !this.state.topic || this.state.topic.match(/^[ ]*$/)
-                      ? true
-                      : false
-                  }
-                />
-              )}
-            </View>
             {this.state.subscribedTopic ? (
               <View style={{marginBottom: 30, alignItems: 'center'}}>
                 <Input
@@ -207,6 +161,7 @@ class Mqtt extends Component {
                   onPress={this.sendMessage}
                   buttonStyle={{
                     backgroundColor: status === 'failed' ? 'red' : '#397af8',
+                    borderRadius: 10,
                   }}
                   icon={{name: 'send', color: 'white'}}
                   disabled={
@@ -223,17 +178,20 @@ class Mqtt extends Component {
             type="solid"
             title="CONNECT"
             onPress={this.connect}
-            buttonStyle={{
-              marginBottom: 50,
-              backgroundColor: status === 'failed' ? 'red' : '#397af8',
-            }}
+            buttonStyle={[
+              styles.connectButton,
+              {
+                backgroundColor:
+                  status === 'failed' ? 'red' : db.theme.colors.primary,
+              },
+            ]}
             icon={{
               name: 'lan-connect',
               type: 'material-community',
               color: 'white',
             }}
-            loading={status === 'isFetching' ? true : false}
-            disabled={status === 'isFetching' ? true : false}
+            loading={status === 'connecting'}
+            disabled={status === 'connecting'}
           />
         )}
         <View style={styles.messageBox}>
@@ -255,36 +213,36 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 70,
   },
+  clientIdText: {
+    marginBottom: 50,
+    textAlign: 'center',
+  },
+  connectButton: {
+    marginBottom: 50,
+    width: '80%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    fontSize: 18,
+    alignSelf: 'center',
+  },
   messageBox: {
     margin: 16,
     flex: 1,
   },
-  myMessageComponent: {
-    backgroundColor: '#000000',
-    borderRadius: 3,
-    padding: 5,
-    marginBottom: 5,
-  },
   messageComponent: {
     marginBottom: 5,
     backgroundColor: '#0075e2',
-    padding: 5,
-    borderRadius: 3,
-  },
-  introMessage: {},
-  textInput: {
-    height: 40,
-    margin: 5,
+    padding: 10,
+    borderRadius: 8,
     borderWidth: 1,
-    padding: 5,
-  },
-  textIntro: {
-    color: 'black',
-    fontSize: 12,
+    borderColor: '#004a99',
   },
   textMessage: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
