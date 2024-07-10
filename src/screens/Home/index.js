@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Container, Header, H1, PrimaryText} from './styles';
 import {Text, ScrollView, StatusBar, TouchableOpacity} from 'react-native';
 import db from '../../../db.json';
@@ -9,60 +9,93 @@ import dgram from 'react-native-udp';
 import {port} from '../../../constants';
 
 export default ({navigation}) => {
-  const {isSocketConnected, hostIP} = useSocketContext();
-  const socket = dgram.createSocket('udp4');
+  const {isSocketConnected, hostIP, isMqtt, client} = useSocketContext();
+  //const socket = dgram.createSocket('udp4');
+  //const [socket, setSocket] = useState(null);
 
   function sendHomeSignal() {
-    // Implement the logic to send "HOME" signal to the server
-
-    if (!isSocketConnected) {
-      // Socket is not connected, show an alert or a message
+    if (!isSocketConnected && !isMqtt) {
+      // Check both connection states
       alert(
-        'Socket is not connected. Please start the search to connect to the hardware.',
+        'Neither Socket nor MQTT is connected. Please check your connections.',
       );
       return;
     }
 
     const signalToSend = {
       command: 'RECEIVE',
+      ...(isMqtt && {client_id: 'app-01'}), //
     };
 
     const jsonString = JSON.stringify(signalToSend);
 
-    // Reuse the existing socket instance to send "HOME" signal
-    socket.bind(port);
-    socket.once('listening', function () {
-      socket.send(
-        jsonString,
-        undefined,
-        undefined,
-        port,
-        hostIP,
-        function (err) {
-          if (err) throw err;
-          console.log(hostIP);
-          //socket.close();
-        },
-      );
-      socket.on('message', function (msg, rinfo) {
-        var buffer = {
-          data: msg.toString(),
-        };
-        console.log('data.data', buffer.data);
-        if (buffer.data !== 'UNKNOWN' && buffer.data !== 'WAIT') {
-          alert('Remote Identified! Device: ' + buffer.data);
-          navigation.navigate('ACControl', {Protocol: buffer.data});
-          socket.close();
+    if (isSocketConnected) {
+      const socket = dgram.createSocket('udp4');
+      // Reuse the existing socket instance to send "HOME" signal
+      socket.bind(port);
+      socket.once('listening', function () {
+        socket.send(
+          jsonString,
+          undefined,
+          undefined,
+          port,
+          hostIP,
+          function (err) {
+            if (err) throw err;
+            console.log(hostIP);
+            //socket.close();
+          },
+        );
+        socket.on('message', function (msg, rinfo) {
+          var buffer = {
+            data: msg.toString(),
+          };
+          console.log('data.data', buffer.data);
+          if (
+            buffer.data !== 'UNKNOWN' &&
+            buffer.data !== 'WAIT' &&
+            buffer.data !== 'UNSUPPORTED'
+          ) {
+            alert('Remote Identified! Device: ' + buffer.data);
+            navigation.navigate('ACControl', {Protocol: buffer.data});
+            socket.close();
+          }
+          if (buffer.data === 'UNKNOWN') {
+            alert('UNKNOWN device!');
+          }
+          if (buffer.data === 'UNSUPPORTED') {
+            alert('Unsupported device!');
+            socket.close(); // Đóng socket sau khi nhận được UNSUPPORTED
+          }
+        });
+      });
+    } else if (isMqtt) {
+      const request = new Paho.MQTT.Message(jsonString);
+      request.destinationName = 'esp32/request';
+      request.retained = false;
+      client.send(request);
+      client.onMessageArrived = message => {
+        const parsedMessage = JSON.parse(message.payloadString);
+        if (parsedMessage.message === 'UNSUPPORTED') {
+          alert('Unsupported device!');
         }
-        if (buffer.data === 'UNKNOWN') {
+        if (
+          parsedMessage.message !== 'UNKNOWN' &&
+          parsedMessage.message !== 'WAIT' &&
+          parsedMessage.message !== 'UNSUPPORTED'
+        ) {
+          alert('Remote Identified! Protocol: ' + parsedMessage.message);
+          navigation.navigate('ACControl', {Protocol: parsedMessage.message});
+        }
+        if (parsedMessage.message === 'UNKNOWN') {
           alert('UNKNOWN device!');
         }
-      });
-    });
+      };
+    }
   }
 
   function learnSignal() {
-    if (!isSocketConnected) {
+    if (!isSocketConnected && !isMqtt) {
       alert(
         'Socket is not connected. Please start the search to connect to the hardware.',
       );

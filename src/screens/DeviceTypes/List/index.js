@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import t from 'prop-types';
 import {Dimensions} from 'react-native';
 
@@ -7,6 +7,7 @@ import {API_URL} from '../../../../constants';
 
 import {Container, Gradient, Name} from './styled';
 import axios from 'axios';
+import {useFocusEffect} from '@react-navigation/native';
 
 const offset = 30;
 const width = Dimensions.get('window').width / 2 - offset;
@@ -14,24 +15,26 @@ const width = Dimensions.get('window').width / 2 - offset;
 export default function List({handleNavigate}) {
   const [deviceTypes, setDeviceTypes] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/api/device/getalltype`);
-        const data = response.data;
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/device/getalltype`);
+      const data = response.data;
 
-        if (data.success) {
-          setDeviceTypes(data.types);
-        } else {
-          console.error('Error fetching device types:', data.message);
-        }
-      } catch (error) {
-        console.error('Error fetching device types:', error);
+      if (data.success) {
+        setDeviceTypes(data.types);
+      } else {
+        console.error('Error fetching device types:', data.message);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching device types:', error);
+    }
+  };
 
-    fetchData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, []),
+  );
 
   return (
     <Container

@@ -11,7 +11,6 @@ import MainDrawer from './src/stacks/MainDrawer';
 import Preload from './src/screens/Preload';
 import SignIn from './src/screens/SignIn';
 import SignUp from './src/screens/SignUp';
-import Historic from './src/screens/Historic';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
 import NewHardware from './src/screens/NewHardware';
@@ -33,6 +32,7 @@ import ACLearnSignal from './src/screens/ACLearnSignal';
 import UserACBrands from './src/screens/UserACBrands';
 import UserACControl from './src/screens/UserACControl';
 import TimerScript from './src/components/TimerScript';
+import Mqtt from './src/screens/Mqtt';
 
 const navOptionHandler = () => ({
   headerShown: false,
@@ -45,7 +45,6 @@ function DrawerNavigator({navigation}) {
       initialRouteName="Home"
       drawerContent={() => <MainDrawer navigation={navigation} />}>
       <Drawer.Screen name="Preload" component={Preload} />
-      <Drawer.Screen name="Historic" component={Historic} />
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="NewHardware" component={NewHardware} />
@@ -64,6 +63,7 @@ function DrawerNavigator({navigation}) {
       <Drawer.Screen name="DeviceTypes" component={DeviceTypes} />
       <Drawer.Screen name="SpeechControl" component={SpeechControl} />
       <Drawer.Screen name="TimerScript" component={TimerScript} />
+      <Drawer.Screen name="Mqtt" component={Mqtt} />
     </Drawer.Navigator>
   );
 }

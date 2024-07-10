@@ -16,7 +16,7 @@ import {Container, Row, Column} from './styled';
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import SpeechControl from '../SpeechControl'; // Import the SpeechControl component
 
@@ -24,7 +24,7 @@ export default ({route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const [isVoiceScreenVisible, setIsVoiceScreenVisible] = useState(false); // State to manage the visibility of SpeechControl
-  const {isSocketConnected} = useSocketContext(); // Use the socket context here
+  const {isSocketConnected, isMqtt, client} = useSocketContext(); // Use the socket context here
   const {Protocol} = route.params || '';
   const {hostIp} = useSelector(state => state.user.hostIp);
 
@@ -37,11 +37,10 @@ export default ({route}) => {
   };
 
   const sendPowerSignal = () => {
-    const socket = dgram.createSocket('udp4');
-
-    if (!isSocketConnected) {
+    if (!isSocketConnected && !isMqtt) {
+      // Check both connection states
       alert(
-        'Socket is not connected. Please start the search to connect to the server.',
+        'Neither Socket nor MQTT is connected. Please check your connections.',
       );
       return;
     }
@@ -50,26 +49,48 @@ export default ({route}) => {
       command: messageStageOn ? 'OFF-AC' : 'ON-AC',
       mode: '0',
       Protocol: Protocol || '',
+      ...(isMqtt && {client_id: 'app-01'}), // Thêm client_id nếu là MQTT
     };
-
     const jsonString = JSON.stringify(signalToSend);
 
-    socket.bind(port);
-    socket.once('listening', function () {
-      socket.send(
-        jsonString,
-        undefined,
-        undefined,
-        port,
-        hostIp,
-        function (err) {
-          if (err) throw err;
-          console.log(`Sent JSON object to server:`, hostIp);
+    if (isSocketConnected) {
+      const socket = dgram.createSocket('udp4');
+      socket.bind(port);
+      socket.once('listening', function () {
+        socket.send(
+          jsonString,
+          undefined,
+          undefined,
+          port,
+          hostIp,
+          function (err) {
+            if (err) throw err;
+          },
+        );
+        socket.on('message', function (msg, rinfo) {
+          var buffer = {
+            data: msg.toString(),
+          };
+          console.log('data.data', buffer.data);
+          if (buffer.data === 'RECEIVE') {
+            setMessageStageOn(prevStatus => !prevStatus);
+            socket.close();
+          }
+        });
+      });
+    } else if (isMqtt) {
+      const request = new Paho.MQTT.Message(jsonString);
+      request.destinationName = 'esp32/request';
+      request.retained = false;
+      client.send(request);
+      client.onMessageArrived = message => {
+        const parsedMessage = JSON.parse(message.payloadString);
+        if (parsedMessage.message === 'RECEIVE') {
+          console.log('Message received:', parsedMessage);
           setMessageStageOn(prevStatus => !prevStatus);
-          socket.close();
-        },
-      );
-    });
+        }
+      };
+    }
   };
 
   const data = [

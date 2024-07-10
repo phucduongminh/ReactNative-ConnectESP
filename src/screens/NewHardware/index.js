@@ -15,15 +15,15 @@ import styleGlobal from '../../styles/global';
 import {useSocketContext} from '../../../SocketContext';
 import dgram from 'react-native-udp';
 import {port} from '../../../constants';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 export default () => {
   const notFoundText = 'Search result';
 
   const [loading, setLoading] = useState(false);
   const [foundEspList, setFoundEspList] = useState([{key: notFoundText}]);
-  //const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const {isSocketConnected, setIsSocketConnected} = useSocketContext();
+  const {isSocketConnected, setIsSocketConnected, setHostIP, setIsMqtt} =
+    useSocketContext();
   const {hostIp} = useSelector(state => state.user.hostIp);
   //const [hostIp, setHostIP] = useState('');
 
@@ -46,6 +46,7 @@ export default () => {
     socket.bind(options.port);
     socket.once('listening', function () {
       setIsSocketConnected(true);
+      setIsMqtt(false);
       socket.send(
         jsonString,
         undefined,
@@ -69,7 +70,7 @@ export default () => {
           buffer.data !== 'WAIT'
         ) {
           console.log('data.data', buffer.data);
-          //setHostIP(buffer.data);
+          setHostIP(buffer.data);
           // Check if the list already contains an item with the new value
           if (!foundEspList.some(item => item.key === buffer.data)) {
             setFoundEspList(prevList => [

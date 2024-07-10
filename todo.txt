@@ -1,19 +1,6 @@
 Sorry, mom. But i will try and complete this.
 
-In this holiday
-- Learn Signnal
-- Merge bluetooth and wifi
-- Complete TV and Air Conditioner
-
-Flow:
-1, First button on Home
-App                       ESP
-- Add newharware to 
-connect socket                        
-- Click add remote        -> Add remote
-- If know protocol        -> Remote ON, OFF
-
 NOTE:
 MUST to test learn Signnal before all of another function, because it have to rewrite data
 MUST send learn before Send Script
-
+Tao xong thiet bi nhung khong hoc lenh
