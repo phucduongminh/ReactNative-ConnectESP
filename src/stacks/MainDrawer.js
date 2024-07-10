@@ -20,22 +20,18 @@ const MainDrawer = props => {
           </Opcoes>
         </StyledTouchableOpacity>
 
-        <StyledTouchableOpacity
+        {/* <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Devices')}>
           <Opcoes>
             <MaterialIcons name="devices" size={28} style={{color: 'white'}} />
             <TextItem>Available Devices</TextItem>
           </Opcoes>
-        </StyledTouchableOpacity>
+        </StyledTouchableOpacity> */}
 
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('UserDevices')}>
           <Opcoes>
-            <MaterialIcons
-              name="broadcast-on-personal"
-              size={28}
-              style={{color: 'white'}}
-            />
+            <MaterialIcons name="devices" size={28} style={{color: 'white'}} />
             <TextItem>My Home Devices</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>
@@ -56,7 +52,7 @@ const MainDrawer = props => {
           onPress={() => props.navigation.navigate('Mqtt')}>
           <Opcoes>
             <MaterialIcons
-              name="bluetooth"
+              name="contactless"
               size={28}
               style={{color: 'white'}}
             />
@@ -75,7 +71,7 @@ const MainDrawer = props => {
         <StyledTouchableOpacity
           onPress={() => props.navigation.navigate('Preload')}>
           <Opcoes>
-            <MaterialIcons name="refresh" size={28} style={{color: 'white'}} />
+            <MaterialIcons name="logout" size={28} style={{color: 'white'}} />
             <TextItem>Sign Out</TextItem>
           </Opcoes>
         </StyledTouchableOpacity>

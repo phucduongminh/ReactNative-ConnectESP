@@ -89,6 +89,7 @@ const ModalForm = ({
         const device_id = data.device_id;
         setDeviceName('');
         setInvisible();
+        Alert.alert('Direction', 'Press each button to start learning!');
         handleNavigateModal(device_id);
       } else {
         console.error('Error adding device:', data.message);
