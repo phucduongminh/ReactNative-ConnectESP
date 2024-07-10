@@ -29,7 +29,7 @@ const Mqtt = () => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [status, setStatus] = useState('');
-  const {setIsMqtt, setClient} = useSocketContext();
+  const {setIsMqtt, setClient, setIsSocketConnected} = useSocketContext();
 
   useEffect(() => {
     client.onConnectionLost = onConnectionLost;
@@ -57,6 +57,7 @@ const Mqtt = () => {
     console.log('onConnect');
     setStatus('connected');
     setIsMqtt(true);
+    setIsSocketConnected(false);
     setClient(client);
     setSubscribedTopic(topic);
     client.subscribe(topic, {qos: 0});

@@ -21,7 +21,7 @@ import dgram from 'react-native-udp'; // Assuming you are using this library for
 const SpeechControl = ({mode}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
-  const {isSocketConnected} = useSocketContext();
+  const {isSocketConnected, isMqtt, client} = useSocketContext();
   const {hostIp} = useSelector(state => state.user.hostIp);
   const {userId} = useSelector(state => state.user.userId);
 
@@ -85,49 +85,62 @@ const SpeechControl = ({mode}) => {
         {text: response.data.text},
         {headers: {'Content-Type': 'application/json'}},
       );
-      //console.log('Response from server:', res.data);
       if (res.data.success) {
         const signalToSend = {
           command: res.data.data.command,
           user_id: userId,
           ordinal: res.data.data.ordinal || 1,
           mode: mode.toString(),
+          ...(isMqtt && {client_id: 'app-01'}), //
         };
 
         const jsonString = JSON.stringify(signalToSend);
         console.log('Sending JSON object to server:', jsonString);
-        const socket = dgram.createSocket('udp4');
+        if (isSocketConnected) {
+          const socket = dgram.createSocket('udp4');
 
-        socket.bind(port);
-        socket.once('listening', function () {
-          socket.send(
-            jsonString,
-            undefined,
-            undefined,
-            port,
-            hostIp,
-            function (err) {
-              if (err) {
-                throw err;
-              }
-              console.log('Sent JSON object to server:', hostIp);
-              //socket.close();
-            },
-          );
-          socket.on('message', function (msg, rinfo) {
-            var buffer = {
-              data: msg.toString(),
-            };
-            console.log('data.data', buffer.data);
-            if (buffer.data !== 'NETWORK-ERR') {
+          socket.bind(port);
+          socket.once('listening', function () {
+            socket.send(
+              jsonString,
+              undefined,
+              undefined,
+              port,
+              hostIp,
+              function (err) {
+                if (err) {
+                  throw err;
+                }
+                console.log('Sent JSON object to server:', hostIp);
+                //socket.close();
+              },
+            );
+            socket.on('message', function (msg, rinfo) {
+              var buffer = {
+                data: msg.toString(),
+              };
               console.log('data.data', buffer.data);
-              socket.close();
-            }
-            if (buffer.data === 'NETWORK-ERR') {
+              if (buffer.data !== 'NETWORK-ERR') {
+                console.log('data.data', buffer.data);
+                socket.close();
+              }
+              if (buffer.data === 'NETWORK-ERR') {
+                alert('Server is not available!');
+              }
+            });
+          });
+        } else if (isMqtt) {
+          const request = new Paho.MQTT.Message(jsonString);
+          request.destinationName = 'esp32/request';
+          request.retained = false;
+          client.send(request);
+          client.onMessageArrived = message => {
+            const parsedMessage = JSON.parse(message.payloadString);
+            if (parsedMessage.message === 'NETWORK-ERR') {
               alert('Server is not available!');
             }
-          });
-        });
+          };
+        }
       } else {
         Alert.alert('Try again!');
       }

@@ -11,7 +11,6 @@ import MainDrawer from './src/stacks/MainDrawer';
 import Preload from './src/screens/Preload';
 import SignIn from './src/screens/SignIn';
 import SignUp from './src/screens/SignUp';
-import Historic from './src/screens/Historic';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
 import NewHardware from './src/screens/NewHardware';
@@ -46,7 +45,6 @@ function DrawerNavigator({navigation}) {
       initialRouteName="Home"
       drawerContent={() => <MainDrawer navigation={navigation} />}>
       <Drawer.Screen name="Preload" component={Preload} />
-      <Drawer.Screen name="Historic" component={Historic} />
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="NewHardware" component={NewHardware} />

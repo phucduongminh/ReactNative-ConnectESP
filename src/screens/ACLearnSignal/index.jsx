@@ -9,13 +9,13 @@ import {Container, Row, Column} from './styled';
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 import {port} from '../../../constants';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 export default ({navigation, route}) => {
   const [currentDegree, setCurrentDegree] = useState(30);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const {device_id} = route.params;
-  const {isSocketConnected} = useSocketContext(); // Use the socket context here
+  const {isSocketConnected, isMqtt, client} = useSocketContext(); // Use the socket context here
   const {hostIp} = useSelector(state => state.user.hostIp);
 
   const handleTemperatureUp = () => {
@@ -28,61 +28,93 @@ export default ({navigation, route}) => {
 
   const learnPowerSignal = id => () => {
     console.log(device_id);
-    const socket = dgram.createSocket('udp4');
 
-    if (!isSocketConnected) {
+    if (!isSocketConnected && !isMqtt) {
+      // Check both connection states
       alert(
-        'Socket is not connected. Please start the search to connect to the server.',
+        'Neither Socket nor MQTT is connected. Please check your connections.',
       );
       return;
     }
-    
+
     id = messageStageOn ? 'power-off' : 'power';
 
     const signalToSend = {
       command: 'LEARN',
       device_id: device_id,
       button_id: id,
+      ...(isMqtt && {client_id: 'app-01'}), //
     };
 
     const jsonString = JSON.stringify(signalToSend);
     console.log('Sending JSON object to server:', jsonString);
 
-    socket.bind(port);
-    socket.once('listening', function () {
-      socket.send(
-        jsonString,
-        undefined,
-        undefined,
-        port,
-        hostIp,
-        function (err) {
-          if (err) {
-            throw err;
-          }
-          console.log('Sent JSON object to server:', hostIp);
-          //socket.close();
-        },
-      );
-      socket.on('message', function (msg, rinfo) {
-        var buffer = {
-          data: msg.toString(),
-        };
-        console.log('data.data', buffer.data);
-        if (buffer.data !== 'LEARN-FAIL' && buffer.data !== 'PRO') {
+    if (isSocketConnected) {
+      const socket = dgram.createSocket('udp4');
+      socket.bind(port);
+      socket.once('listening', function () {
+        socket.send(
+          jsonString,
+          undefined,
+          undefined,
+          port,
+          hostIp,
+          function (err) {
+            if (err) {
+              throw err;
+            }
+            console.log('Sent JSON object to server:', hostIp);
+            //socket.close();
+          },
+        );
+        socket.on('message', function (msg, rinfo) {
+          var buffer = {
+            data: msg.toString(),
+          };
           console.log('data.data', buffer.data);
+          if (buffer.data === 'SUC-NOPRO') {
+            console.log('data.data', buffer.data);
+            alert('Learn signal successfully! ');
+            setMessageStageOn(prevStatus => !prevStatus);
+            socket.close();
+          }
+          if (buffer.data === 'SUC-PRO') {
+            alert(
+              'This is a supported device, you dont need to learn signal! ',
+            );
+            socket.close();
+            navigation.navigate('Home');
+          }
+          if (buffer.data === 'LEARN-FAIL') {
+            alert('Check Hardware or Remote Control and try again!');
+          }
+          if (buffer.data === 'NETWORK-ERR') {
+            alert('Server is not available!');
+          }
+        });
+      });
+    } else if (isMqtt) {
+      const request = new Paho.MQTT.Message(jsonString);
+      request.destinationName = 'esp32/request';
+      request.retained = false;
+      client.send(request);
+      client.onMessageArrived = message => {
+        const parsedMessage = JSON.parse(message.payloadString);
+        if (
+          parsedMessage.message === 'SUC-PRO' ||
+          parsedMessage.message === 'SUC-NOPRO'
+        ) {
           alert('Learn signal successfully! ');
           setMessageStageOn(prevStatus => !prevStatus);
-          socket.close();
         }
-        if (buffer.data === 'LEARN-FAIL') {
+        if (parsedMessage.message === 'LEARN-FAIL') {
           alert('Check Hardware or Remote Control and try again!');
         }
-        if (buffer.data === 'NETWORK-ERR') {
+        if (parsedMessage.message === 'NETWORK-ERR') {
           alert('Server is not available!');
         }
-      });
-    });
+      };
+    }
   };
 
   const data = [

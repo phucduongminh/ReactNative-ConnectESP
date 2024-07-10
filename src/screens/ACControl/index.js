@@ -65,16 +65,24 @@ export default ({route}) => {
           hostIp,
           function (err) {
             if (err) throw err;
-            setMessageStageOn(prevStatus => !prevStatus);
-            socket.close();
           },
         );
+        socket.on('message', function (msg, rinfo) {
+          var buffer = {
+            data: msg.toString(),
+          };
+          console.log('data.data', buffer.data);
+          if (buffer.data === 'RECEIVE') {
+            setMessageStageOn(prevStatus => !prevStatus);
+            socket.close();
+          }
+        });
       });
     } else if (isMqtt) {
-      const message = new Paho.MQTT.Message(jsonString);
-      message.destinationName = 'esp32/request';
-      message.retained = false;
-      client.send(message);
+      const request = new Paho.MQTT.Message(jsonString);
+      request.destinationName = 'esp32/request';
+      request.retained = false;
+      client.send(request);
       client.onMessageArrived = message => {
         const parsedMessage = JSON.parse(message.payloadString);
         if (parsedMessage.message === 'RECEIVE') {

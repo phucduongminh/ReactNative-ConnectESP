@@ -17,7 +17,7 @@ const TimerScript = ({device_id, Protocol}) => {
   const [selectedTime, setSelectedTime] = useState(new Date()); // Default to current time
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const {isSocketConnected} = useSocketContext(); // Use the socket context here
+  const {isSocketConnected, isMqtt, client} = useSocketContext(); // Use the socket context here
   const {hostIp} = useSelector(state => state.user.hostIp);
 
   const handleTimeChange = (event, selectedDate) => {
@@ -34,11 +34,11 @@ const TimerScript = ({device_id, Protocol}) => {
 
   const handleSetTime = () => {
     console.log(device_id);
-    const socket = dgram.createSocket('udp4');
 
-    if (!isSocketConnected) {
+    if (!isSocketConnected && !isMqtt) {
+      // Check both connection states
       alert(
-        'Socket is not connected. Please start the search to connect to the server.',
+        'Neither Socket nor MQTT is connected. Please check your connections.',
       );
       return;
     }
@@ -47,48 +47,69 @@ const TimerScript = ({device_id, Protocol}) => {
 
     const signalToSend = {
       command: Protocol ? subCommand : 'SEND-LEARN',
+      //command: 'ON-AC',
       device_id: device_id,
       button_id: isOn ? 'power' : 'power-off',
       degree: degree,
       hour: hours,
       minute: minutes,
+      ...(isMqtt && {client_id: 'app-01'}),
+      ...(Protocol && {Protocol: Protocol}),
+      ...(Protocol && {mode: '0'}),
     };
 
     const jsonString = JSON.stringify(signalToSend);
     console.log('Sending JSON object to server:', jsonString);
 
-    socket.bind(port);
-    socket.once('listening', function () {
-      socket.send(
-        jsonString,
-        undefined,
-        undefined,
-        port,
-        hostIp,
-        function (err) {
-          if (err) {
-            throw err;
+    if (isSocketConnected) {
+      const socket = dgram.createSocket('udp4');
+      socket.bind(port);
+      socket.once('listening', function () {
+        socket.send(
+          jsonString,
+          undefined,
+          undefined,
+          port,
+          hostIp,
+          function (err) {
+            if (err) {
+              throw err;
+            }
+            console.log('Sent JSON object to server:', hostIp);
+            //socket.close();
+          },
+        );
+        socket.on('message', function (msg, rinfo) {
+          var buffer = {
+            data: msg.toString(),
+          };
+          console.log('data.data', buffer.data);
+          if (buffer.data === 'DONE-SET-TIME') {
+            alert(
+              `Time set to ${hours}:${minutes < 10 ? `0${minutes}` : minutes}`,
+            );
+            socket.close();
           }
-          console.log('Sent JSON object to server:', hostIp);
-          //socket.close();
-        },
-      );
-      socket.on('message', function (msg, rinfo) {
-        var buffer = {
-          data: msg.toString(),
-        };
-        console.log('data.data', buffer.data);
-        if (buffer.data === 'DONE-SET-TIME') {
+          if (buffer.data === 'NETWORK-ERR') {
+            alert('Server is not available!');
+          }
+        });
+      });
+    } else if (isMqtt) {
+      const request = new Paho.MQTT.Message(jsonString);
+      request.destinationName = 'esp32/request';
+      request.retained = false;
+      client.send(request);
+      client.onMessageArrived = message => {
+        const parsedMessage = JSON.parse(message.payloadString);
+        if (parsedMessage.message === 'DONE-SET-TIME') {
+          console.log('Message received:', parsedMessage);
           alert(
             `Time set to ${hours}:${minutes < 10 ? `0${minutes}` : minutes}`,
           );
-          socket.close();
         }
-        if (buffer.data === 'NETWORK-ERR') {
-          alert('Server is not available!');
-        }
-      });
-    });
+      };
+    }
   };
 
   return (
