@@ -21,19 +21,73 @@ import {useSelector} from 'react-redux';
 import SpeechControl from '../SpeechControl'; // Import the SpeechControl component
 
 export default ({route}) => {
-  const [currentDegree, setCurrentDegree] = useState(30);
+  const [currentDegree, setCurrentDegree] = useState(28);
   const [messageStageOn, setMessageStageOn] = useState(false);
   const [isVoiceScreenVisible, setIsVoiceScreenVisible] = useState(false); // State to manage the visibility of SpeechControl
   const {isSocketConnected, isMqtt, client} = useSocketContext(); // Use the socket context here
   const {Protocol} = route.params || '';
   const {hostIp} = useSelector(state => state.user.hostIp);
 
-  const handleTemperatureUp = () => {
-    setCurrentDegree(prevDegree => prevDegree + 1);
-  };
+  const handleTemperature = id => {
+    if (id === 'up') {
+      setCurrentDegree(prevDegree => prevDegree + 1);
+    } else if (id === 'down') {
+      setCurrentDegree(prevDegree => prevDegree - 1);
+    }
+    const newDegree = currentDegree + (id === 'up' ? 1 : -1);
+    if (!isSocketConnected && !isMqtt) {
+      // Check both connection states
+      alert(
+        'Neither Socket nor MQTT is connected. Please check your connections.',
+      );
+      return;
+    }
 
-  const handleTemperatureDown = () => {
-    setCurrentDegree(prevDegree => prevDegree - 1);
+    const signalToSend = {
+      command: 'ON-AC',
+      mode: '0',
+      Protocol: Protocol || '',
+      degree: newDegree,
+      ...(isMqtt && {client_id: 'app-01'}), // Thêm client_id nếu là MQTT
+    };
+    const jsonString = JSON.stringify(signalToSend);
+
+    if (isSocketConnected) {
+      const socket = dgram.createSocket('udp4');
+      socket.bind(port);
+      socket.once('listening', function () {
+        socket.send(
+          jsonString,
+          undefined,
+          undefined,
+          port,
+          hostIp,
+          function (err) {
+            if (err) throw err;
+          },
+        );
+        socket.on('message', function (msg, rinfo) {
+          var buffer = {
+            data: msg.toString(),
+          };
+          console.log('data.data', buffer.data);
+          if (buffer.data === 'RECEIVE') {
+            socket.close();
+          }
+        });
+      });
+    } else if (isMqtt) {
+      const request = new Paho.MQTT.Message(jsonString);
+      request.destinationName = 'esp32/request';
+      request.retained = false;
+      client.send(request);
+      client.onMessageArrived = message => {
+        const parsedMessage = JSON.parse(message.payloadString);
+        if (parsedMessage.message === 'RECEIVE') {
+          console.log('Message received:', parsedMessage);
+        }
+      };
+    }
   };
 
   const sendPowerSignal = () => {
@@ -49,6 +103,7 @@ export default ({route}) => {
       command: messageStageOn ? 'OFF-AC' : 'ON-AC',
       mode: '0',
       Protocol: Protocol || '',
+      degree: currentDegree,
       ...(isMqtt && {client_id: 'app-01'}), // Thêm client_id nếu là MQTT
     };
     const jsonString = JSON.stringify(signalToSend);
@@ -102,7 +157,7 @@ export default ({route}) => {
           type: 'rounded',
           buttons: {
             center: {
-              action: () => {},
+              action: () => {handleTemperature('up')},
               icon: 'chevron-up',
             },
           },
@@ -112,7 +167,7 @@ export default ({route}) => {
           type: 'rounded',
           buttons: {
             center: {
-              action: () => {},
+              action: () => {handleTemperature('down')},
               icon: 'chevron-down',
             },
           },
@@ -232,11 +287,11 @@ export default ({route}) => {
                 ...button.buttons,
                 up: {
                   ...button.buttons.up,
-                  action: handleTemperatureUp,
+                  //action: () => {},
                 },
                 down: {
                   ...button.buttons.down,
-                  action: handleTemperatureDown,
+                  //action: () => {},
                 },
               };
 

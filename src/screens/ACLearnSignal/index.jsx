@@ -80,7 +80,7 @@ export default ({navigation, route}) => {
           }
           if (buffer.data === 'SUC-PRO') {
             alert(
-              'This is a supported device, you dont need to learn signal! ',
+              "This is a supported device, you don't need to learn signal! ",
             );
             socket.close();
             navigation.navigate('Home');
@@ -100,12 +100,13 @@ export default ({navigation, route}) => {
       client.send(request);
       client.onMessageArrived = message => {
         const parsedMessage = JSON.parse(message.payloadString);
-        if (
-          parsedMessage.message === 'SUC-PRO' ||
-          parsedMessage.message === 'SUC-NOPRO'
-        ) {
+        if (parsedMessage.message === 'SUC-NOPRO') {
           alert('Learn signal successfully! ');
           setMessageStageOn(prevStatus => !prevStatus);
+        }
+        if (parsedMessage.message === 'SUC-PRO') {
+          alert("This is a supported device, you don't need to learn signal! ");
+          navigation.navigate('Home');
         }
         if (parsedMessage.message === 'LEARN-FAIL') {
           alert('Check Hardware or Remote Control and try again!');

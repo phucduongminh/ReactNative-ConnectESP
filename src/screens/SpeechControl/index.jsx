@@ -92,6 +92,8 @@ const SpeechControl = ({mode}) => {
           ordinal: res.data.data.ordinal || 1,
           mode: mode.toString(),
           ...(isMqtt && {client_id: 'app-01'}), //
+          ...(res.data.data.hour && {hour: res.data.data.hour}),
+          //...(res.data.data.hour && {minute: 0}),
         };
 
         const jsonString = JSON.stringify(signalToSend);
