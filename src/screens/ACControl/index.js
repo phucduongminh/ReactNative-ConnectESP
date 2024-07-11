@@ -157,7 +157,9 @@ export default ({route}) => {
           type: 'rounded',
           buttons: {
             center: {
-              action: () => {handleTemperature('up')},
+              action: () => {
+                handleTemperature('up');
+              },
               icon: 'chevron-up',
             },
           },
@@ -167,7 +169,9 @@ export default ({route}) => {
           type: 'rounded',
           buttons: {
             center: {
-              action: () => {handleTemperature('down')},
+              action: () => {
+                handleTemperature('down');
+              },
               icon: 'chevron-down',
             },
           },
@@ -321,7 +325,7 @@ export default ({route}) => {
           <View style={styles.modalOverlay} />
         </TouchableWithoutFeedback>
         <View style={styles.modalContainer}>
-          <SpeechControl mode={0} />
+          <SpeechControl mode={0} Protocol={Protocol} />
         </View>
       </Modal>
     </Container>

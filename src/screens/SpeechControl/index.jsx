@@ -18,7 +18,7 @@ import {port} from '../../../constants';
 import {useSocketContext} from '../../../SocketContext'; // Assuming you have this context
 import dgram from 'react-native-udp'; // Assuming you are using this library for UDP
 
-const SpeechControl = ({mode}) => {
+const SpeechControl = ({mode, Protocol}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
   const {isSocketConnected, isMqtt, client} = useSocketContext();
@@ -93,6 +93,7 @@ const SpeechControl = ({mode}) => {
           mode: mode.toString(),
           ...(isMqtt && {client_id: 'app-01'}), //
           ...(res.data.data.hour && {hour: res.data.data.hour}),
+          ...(Protocol && {Protocol: Protocol}),
           //...(res.data.data.hour && {minute: 0}),
         };
 
@@ -129,6 +130,9 @@ const SpeechControl = ({mode}) => {
               if (buffer.data === 'NETWORK-ERR') {
                 alert('Server is not available!');
               }
+              if (buffer.data === 'INVALID-CMD') {
+                alert('Invalid command!');
+              }
             });
           });
         } else if (isMqtt) {
@@ -140,6 +144,9 @@ const SpeechControl = ({mode}) => {
             const parsedMessage = JSON.parse(message.payloadString);
             if (parsedMessage.message === 'NETWORK-ERR') {
               alert('Server is not available!');
+            }
+            if (parsedMessage.message === 'INVALID-CMD') {
+              alert('Invalid command!');
             }
           };
         }
