@@ -52,11 +52,10 @@ export default ({navigation, route}) => {
     };
 
     console.log('Sending JSON object to server:', JSON.stringify(signalToSend));
+    const jsonString = JSON.stringify(signalToSend);
 
     if (isSocketConnected) {
       const socket = dgram.createSocket('udp4');
-      const jsonString = JSON.stringify(signalToSend);
-
       socket.bind(port);
       socket.once('listening', function () {
         socket.send(
@@ -86,10 +85,18 @@ export default ({navigation, route}) => {
         });
       });
     } else if (isMqtt) {
-      const message = new Paho.MQTT.Message(JSON.stringify(signalToSend));
-      message.destinationName = 'esp32/request'; // Hoặc topic MQTT của bạn
-      message.retained = false;
-      client.send(message); // Sử dụng client MQTT của bạn
+      const request = new Paho.MQTT.Message(jsonString);
+      request.destinationName = 'esp32/request';
+      request.retained = false;
+      client.send(request);
+      client.onMessageArrived = message => {
+        const parsedMessage = JSON.parse(message.payloadString);
+        if (parsedMessage.message !== 'NETWORK-ERR') {
+          setMessageStageOn(prevStatus => !prevStatus);
+        } else if (parsedMessage.message === 'NETWORK-ERR') {
+          alert('Server is not available!');
+        }
+      };
     }
   };
 
